@@ -141,3 +141,29 @@ func setKeaDhcpv6Interface(t *testing.T, uri, key, secret, iface string) error {
 	}
 	return nil
 }
+
+func EndpointPreCheck(t *testing.T, endpoint, requirement string) {
+	t.Helper()
+	AccPreCheck(t)
+
+	req, err := http.NewRequest(http.MethodGet, os.Getenv("OPNSENSE_URI")+"/api"+endpoint, nil)
+	if err != nil {
+		t.Fatalf("EndpointPreCheck: new request: %v", err)
+	}
+	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(os.Getenv("OPNSENSE_API_KEY")+":"+os.Getenv("OPNSENSE_API_SECRET"))))
+
+	client := &http.Client{Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: os.Getenv("OPNSENSE_ALLOW_INSECURE") == "true",
+		},
+	}}
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("EndpointPreCheck: %s: %v", endpoint, err)
+	}
+	resp.Body.Close()
+
+	if resp.StatusCode == http.StatusNotFound {
+		t.Skipf("%s not available (HTTP 404): %s", endpoint, requirement)
+	}
+}
