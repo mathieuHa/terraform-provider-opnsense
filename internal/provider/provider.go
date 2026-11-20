@@ -17,6 +17,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/quagga"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/routes"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/routing"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/trafficshaper"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/trust"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/unbound"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/wireguard"
@@ -302,6 +303,7 @@ func (p *opnsenseProvider) Resources(ctx context.Context) []func() resource.Reso
 		quagga.Resources(ctx),
 		routes.Resources(ctx),
 		routing.Resources(ctx),
+		trafficshaper.Resources(ctx),
 		trust.Resources(ctx),
 		unbound.Resources(ctx),
 		wireguard.Resources(ctx),
@@ -327,6 +329,7 @@ func (p *opnsenseProvider) DataSources(ctx context.Context) []func() datasource.
 		quagga.DataSources(ctx),
 		routes.DataSources(ctx),
 		routing.DataSources(ctx),
+		trafficshaper.DataSources(ctx),
 		trust.DataSources(ctx),
 		unbound.DataSources(ctx),
 		wireguard.DataSources(ctx),

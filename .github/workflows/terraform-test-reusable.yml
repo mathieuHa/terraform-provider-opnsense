@@ -64,7 +64,7 @@ jobs:
               "unbound": ["unbound"],
               "ipsec": ["ipsec"],
               "other": ["cron", "diagnostics", "dnsmasq", "interfaces", "kea",
-                        "openvpn", "quagga", "routes", "routing", "trust", "wireguard"],
+                        "openvpn", "quagga", "routes", "routing", "trafficshaper", "trust", "wireguard"],
           }
           # Non-service packages, tested with "other" on full-suite runs.
           EXTRA_OTHER = ["./internal/provider/...", "./internal/tools/...",
