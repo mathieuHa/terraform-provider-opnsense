@@ -67,7 +67,12 @@ func (r *gatewayGroupResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	id, err := r.client.Routing().AddGatewayGroup(ctx, group)
+	var id string
+	err = retryWhileGatewayListStale(ctx, func() error {
+		var addErr error
+		id, addErr = r.client.Routing().AddGatewayGroup(ctx, group)
+		return addErr
+	})
 	if err != nil {
 		if id != "" {
 			data.Id = types.StringValue(id)
@@ -145,7 +150,9 @@ func (r *gatewayGroupResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	err = r.client.Routing().UpdateGatewayGroup(ctx, data.Id.ValueString(), group)
+	err = retryWhileGatewayListStale(ctx, func() error {
+		return r.client.Routing().UpdateGatewayGroup(ctx, data.Id.ValueString(), group)
+	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error",
 			fmt.Sprintf("Unable to update gateway group, got error: %s", err))
