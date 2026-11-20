@@ -82,7 +82,7 @@ func pipeAttributes() map[string]schema.Attribute {
 
 func pipeResourceSchema() schema.Schema {
 	return schema.Schema{
-		MarkdownDescription: "Traffic shaper pipes limit the total bandwidth available to the traffic sent into them, either directly by a rule or through queues.",
+		MarkdownDescription: "Traffic shaper pipes limit the total bandwidth available to the traffic sent into them, either directly by a rule or through queues.\n\n~> **Note:** like **Apply** in the GUI, changes are applied with a reload, which does not remove deleted pipes from the kernel. A deleted pipe stops receiving traffic as soon as its rules are gone, but stays visible in `ipfw pipe show` until the shaper is reset (**Firewall ▸ Shaper ▸ Reset**).",
 		Version:             1,
 		Attributes:          pipeAttributes(),
 	}
