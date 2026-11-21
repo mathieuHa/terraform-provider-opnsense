@@ -22,6 +22,10 @@ func Resources(ctx context.Context) []func() resource.Resource {
 		newDhcpv6ReservationResource,
 		newDhcpv6SubnetResource,
 		newDhcpv6PdPoolResource,
+		newDhcpv4SettingsResource,
+		newDhcpv6SettingsResource,
+		newCtrlAgentSettingsResource,
+		newDdnsSettingsResource,
 	}
 }
 

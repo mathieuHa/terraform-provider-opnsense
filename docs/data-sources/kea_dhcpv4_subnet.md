@@ -26,7 +26,20 @@ data "opnsense_kea_dhcpv4_subnet" "example" {
 
 ### Read-Only
 
+- `allocator` (String) Address allocator: empty for the default, `iterative`, `random` or `flq` (free lease queue).
 - `auto_collect` (Boolean) Automatically update option data from the GUI for relevant attributes.
+- `ddns_conflict_resolution_mode` (String) Conflict resolution: empty for `check-with-dhcid`, `no-check-with-dhcid`, `check-exists-with-dhcid` or `no-check-without-dhcid`.
+- `ddns_dns_port` (Number) Port of the DNS server, `-1` for 53.
+- `ddns_dns_server` (String) Address of the DNS server that receives the updates.
+- `ddns_forward_zone` (String) Forward DNS zone updated by Kea DDNS, e.g. `lan.example.`. Requires `ddns_dns_server` and an enabled `opnsense_kea_ddns_settings`.
+- `ddns_key_algorithm` (String) TSIG algorithm: `hmac-md5`, `hmac-sha1`, `hmac-sha224`, `hmac-sha256`, `hmac-sha384` or `hmac-sha512`.
+- `ddns_key_name` (String) TSIG key name.
+- `ddns_key_secret` (String, Sensitive) TSIG key secret, base64-encoded.
+- `ddns_override_client_update` (Boolean) Update DNS even when the client wants to do it itself.
+- `ddns_override_no_update` (Boolean) Update DNS even when the client asks for no update.
+- `ddns_qualifying_suffix` (String) Suffix appended to unqualified client host names.
+- `ddns_reverse_zone` (String) Reverse DNS zone, e.g. `1.168.192.in-addr.arpa.`.
+- `ddns_update_on_renew` (Boolean) Send DNS updates on every renewal, not only for new leases.
 - `description` (String) Optional description here for your reference (not parsed).
 - `dns_servers` (Set of String) DNS servers to offer to the clients.
 - `domain_name` (String) Domain name to offer to the client.
@@ -41,6 +54,7 @@ data "opnsense_kea_dhcpv4_subnet" "example" {
 - `tftp_bootfile` (String) Boot filename to request.
 - `tftp_server` (String) TFTP server address or fqdn.
 - `time_servers` (Set of String) Set of RFC 868 time servers available to the client.
+- `valid_lifetime` (Number) Lease lifetime in seconds for this subnet, `-1` for the server default.
 
 <a id="nestedatt--static_routes"></a>
 ### Nested Schema for `static_routes`
