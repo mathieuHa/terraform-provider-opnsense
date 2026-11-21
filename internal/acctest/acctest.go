@@ -10,8 +10,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"testing"
 
+	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/terraform-provider-opnsense/internal/provider"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 )
@@ -230,4 +232,17 @@ func OptionPreCheck(t *testing.T, endpoint, monad, field string, values ...strin
 			t.Skipf("%s: option %q not available for %s.%s", endpoint, v, monad, field)
 		}
 	}
+}
+
+func Client() *api.Client {
+	return api.NewClient(api.Options{
+		Uri:           os.Getenv("OPNSENSE_URI"),
+		APIKey:        os.Getenv("OPNSENSE_API_KEY"),
+		APISecret:     os.Getenv("OPNSENSE_API_SECRET"),
+		AllowInsecure: os.Getenv("OPNSENSE_ALLOW_INSECURE") == "true",
+	})
+}
+
+func UUIDRegexp() *regexp.Regexp {
+	return regexp.MustCompile(`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 }
