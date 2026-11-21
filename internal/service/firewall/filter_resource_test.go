@@ -319,11 +319,11 @@ func TestAccFirewallFilterResource_DirectionAny(t *testing.T) {
 			},
 			// Update from direction "in" to "any"
 			{
-				Config: testAccFirewallFilterResourceConfigMinimal("wan", "block", "any", "TCP"),
+				Config: testAccFirewallFilterResourceConfigMinimal("wan", "block", "any", "UDP"),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("opnsense_firewall_filter.test", "filter.direction", "any"),
 					resource.TestCheckResourceAttr("opnsense_firewall_filter.test", "filter.action", "block"),
-					resource.TestCheckResourceAttr("opnsense_firewall_filter.test", "filter.protocol", "TCP"),
+					resource.TestCheckResourceAttr("opnsense_firewall_filter.test", "filter.protocol", "UDP"),
 				),
 			},
 			// Delete testing automatically occurs in TestCase
