@@ -7,6 +7,7 @@ import (
 
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/auth"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/caddy"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/captiveportal"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/chrony"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/core"
@@ -337,6 +338,7 @@ func (p *opnsenseProvider) Resources(ctx context.Context) []func() resource.Reso
 		dnsmasq.Resources(ctx),
 		firewall.Resources(ctx),
 		hasync.Resources(ctx),
+		caddy.Resources(ctx),
 		tailscale.Resources(ctx),
 		chrony.Resources(ctx),
 		nodeexporter.Resources(ctx),
@@ -377,6 +379,7 @@ func (p *opnsenseProvider) DataSources(ctx context.Context) []func() datasource.
 		dnsmasq.DataSources(ctx),
 		firewall.DataSources(ctx),
 		hasync.DataSources(ctx),
+		caddy.DataSources(ctx),
 		tailscale.DataSources(ctx),
 		chrony.DataSources(ctx),
 		nodeexporter.DataSources(ctx),
