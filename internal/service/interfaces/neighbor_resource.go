@@ -1,0 +1,194 @@
+package interfaces
+
+import (
+	"context"
+	"errors"
+	"fmt"
+
+	"github.com/browningluke/opnsense-go/pkg/api"
+	"github.com/browningluke/opnsense-go/pkg/errs"
+	"github.com/browningluke/opnsense-go/pkg/opnsense"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+)
+
+var _ resource.Resource = &neighborResource{}
+var _ resource.ResourceWithConfigure = &neighborResource{}
+var _ resource.ResourceWithImportState = &neighborResource{}
+
+func newNeighborResource() resource.Resource {
+	return &neighborResource{}
+}
+
+type neighborResource struct {
+	client opnsense.Client
+}
+
+func (r *neighborResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_interfaces_neighbor"
+}
+
+func (r *neighborResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = neighborResourceSchema()
+}
+
+func (r *neighborResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	if req.ProviderData == nil {
+		return
+	}
+
+	apiClient, ok := req.ProviderData.(*api.Client)
+	if !ok {
+		resp.Diagnostics.AddError(
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *opnsense.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+		)
+		return
+	}
+
+	r.client = opnsense.NewClient(apiClient)
+}
+
+func (r *neighborResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	var data *neighborResourceModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	obj, err := convertNeighborSchemaToStruct(data)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to parse static neighbor, got error: %s", err))
+		return
+	}
+
+	id, err := r.client.Interfaces().AddNeighbor(ctx, obj)
+	if err != nil {
+		if id != "" {
+			data.Id = types.StringValue(id)
+
+			if readStruct, readErr := r.client.Interfaces().GetNeighbor(ctx, id); readErr == nil {
+				if readModel, convErr := convertNeighborStructToSchema(readStruct); convErr == nil {
+					readModel.Id = data.Id
+					data = readModel
+				}
+			}
+
+			resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+		}
+
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to create static neighbor, got error: %s", err))
+		return
+	}
+
+	data.Id = types.StringValue(id)
+
+	readStruct, err := r.client.Interfaces().GetNeighbor(ctx, id)
+	if err != nil {
+		resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to read back static neighbor, got error: %s", err))
+		return
+	}
+	readModel, err := convertNeighborStructToSchema(readStruct)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to read back static neighbor, got error: %s", err))
+		return
+	}
+	readModel.Id = data.Id
+	data = readModel
+
+	tflog.Trace(ctx, "created a resource")
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *neighborResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	var data *neighborResourceModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	obj, err := r.client.Interfaces().GetNeighbor(ctx, data.Id.ValueString())
+	if err != nil {
+		var notFoundError *errs.NotFoundError
+		if errors.As(err, &notFoundError) {
+			tflog.Warn(ctx, fmt.Sprintf("static neighbor not present in remote, removing from state"))
+			resp.State.RemoveResource(ctx)
+			return
+		}
+
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to read static neighbor, got error: %s", err))
+		return
+	}
+
+	neighborModel, err := convertNeighborStructToSchema(obj)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to read static neighbor, got error: %s", err))
+		return
+	}
+
+	neighborModel.Id = data.Id
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &neighborModel)...)
+}
+
+func (r *neighborResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	var data *neighborResourceModel
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	obj, err := convertNeighborSchemaToStruct(data)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to parse static neighbor, got error: %s", err))
+		return
+	}
+
+	err = r.client.Interfaces().UpdateNeighbor(ctx, data.Id.ValueString(), obj)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to update static neighbor, got error: %s", err))
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+}
+
+func (r *neighborResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	var data *neighborResourceModel
+
+	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	err := r.client.Interfaces().DeleteNeighbor(ctx, data.Id.ValueString())
+
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to delete static neighbor, got error: %s", err))
+		return
+	}
+}
+
+func (r *neighborResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+}
