@@ -31,6 +31,9 @@ jobs:
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
+      - name: No local replace in go.mod
+        run: |
+          if grep -nE '=>[[:space:]]*\.{1,2}/' go.mod; then echo "go.mod points at a local directory"; exit 1; fi
       - name: Release notes from the tag message
         run: |
           git fetch --force --tags origin
