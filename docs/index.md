@@ -21,6 +21,9 @@ will support your needs.
 
 The provider needs to be configured with the proper API credentials before it can be used.
 
+Quickstart, guides and the list of supported resources:
+[mathieuha.github.io/terraform-provider-opnsense](https://mathieuha.github.io/terraform-provider-opnsense/).
+
 ## Getting Started
 
 To generate the API key & secret, follow the
@@ -33,8 +36,8 @@ These can then be used to configure the provider.
 terraform {
   required_providers {
     opnsense = {
-      version = "~> x.0"
-      source  = "browningluke/opnsense"
+      version = "~> 0.37"
+      source  = "mathieuHa/opnsense"
     }
   }
 }
