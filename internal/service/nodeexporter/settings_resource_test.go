@@ -23,8 +23,9 @@ func TestAccNodeExporterSettingsResource(t *testing.T) {
 			{
 				Config: `
 resource "opnsense_nodeexporter_settings" "test" {
-  enabled     = true
-  listen_port = 9101
+  enabled        = true
+  listen_address = "0.0.0.0"
+  listen_port    = 9101
   cpu         = true
   zfs         = true
 }
@@ -39,8 +40,9 @@ resource "opnsense_nodeexporter_settings" "test" {
 			{
 				Config: `
 resource "opnsense_nodeexporter_settings" "test" {
-  enabled     = false
-  listen_port = 9100
+  enabled        = false
+  listen_address = "0.0.0.0"
+  listen_port    = 9100
   cpu         = false
   zfs         = false
 }
