@@ -8,6 +8,7 @@ import (
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/auth"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/captiveportal"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/chrony"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/core"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/cron"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/dhcrelay"
@@ -21,6 +22,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/ipsec"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/kea"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/monit"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/nodeexporter"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/openvpn"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/proxy"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/quagga"
@@ -28,6 +30,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/routes"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/routing"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/syslog"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/tailscale"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/trafficshaper"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/trust"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/unbound"
@@ -334,6 +337,9 @@ func (p *opnsenseProvider) Resources(ctx context.Context) []func() resource.Reso
 		dnsmasq.Resources(ctx),
 		firewall.Resources(ctx),
 		hasync.Resources(ctx),
+		tailscale.Resources(ctx),
+		chrony.Resources(ctx),
+		nodeexporter.Resources(ctx),
 		hostdiscovery.Resources(ctx),
 		captiveportal.Resources(ctx),
 		ids.Resources(ctx),
@@ -371,6 +377,9 @@ func (p *opnsenseProvider) DataSources(ctx context.Context) []func() datasource.
 		dnsmasq.DataSources(ctx),
 		firewall.DataSources(ctx),
 		hasync.DataSources(ctx),
+		tailscale.DataSources(ctx),
+		chrony.DataSources(ctx),
+		nodeexporter.DataSources(ctx),
 		hostdiscovery.DataSources(ctx),
 		captiveportal.DataSources(ctx),
 		ids.DataSources(ctx),
