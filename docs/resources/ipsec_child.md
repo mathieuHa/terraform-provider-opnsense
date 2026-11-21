@@ -72,7 +72,7 @@ resource "opnsense_ipsec_child" "example" {
 - `enabled` (String) Enable or disable the Child Resource.
 - `install_policies` (String) Install policies for the Child Resource.
 - `mode` (String) Mode for the Child Resource.
-- `rekey_time` (String) Rekey time for the Child Resource in seconds.
+- `rekey_time` (String) Rekey time for the Child Resource in seconds. `0` disables rekeying. Defaults to `3600`, like OPNsense.
 - `request_id` (String) Request ID for the Child Resource.
 - `sha256_96` (String) Enable or disable SHA256_96.
 - `start_action` (String) Start action for the Child Resource.

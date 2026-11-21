@@ -49,7 +49,7 @@ func authLocalResourceSchema() schema.Schema {
 				MarkdownDescription: "Authentication round for the AuthLocal Resource.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString("1"),
+				Default:             stringdefault.StaticString("0"),
 			},
 			"authentication": schema.StringAttribute{
 				MarkdownDescription: "Authentication method for the AuthLocal Resource.",
@@ -58,10 +58,14 @@ func authLocalResourceSchema() schema.Schema {
 			"auth_id": schema.StringAttribute{
 				MarkdownDescription: "Authentication ID for the AuthLocal Resource.",
 				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
 			},
 			"eap_id": schema.StringAttribute{
 				MarkdownDescription: "EAP ID for the AuthLocal Resource.",
 				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
 			},
 			"certificates": schema.SetAttribute{
 				ElementType:         types.StringType,
