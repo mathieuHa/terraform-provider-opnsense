@@ -15,6 +15,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/dnsmasq"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/firewall"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/hasync"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/hostdiscovery"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/ids"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/interfaces"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/ipsec"
@@ -333,6 +334,7 @@ func (p *opnsenseProvider) Resources(ctx context.Context) []func() resource.Reso
 		dnsmasq.Resources(ctx),
 		firewall.Resources(ctx),
 		hasync.Resources(ctx),
+		hostdiscovery.Resources(ctx),
 		captiveportal.Resources(ctx),
 		ids.Resources(ctx),
 		interfaces.Resources(ctx),
@@ -369,6 +371,7 @@ func (p *opnsenseProvider) DataSources(ctx context.Context) []func() datasource.
 		dnsmasq.DataSources(ctx),
 		firewall.DataSources(ctx),
 		hasync.DataSources(ctx),
+		hostdiscovery.DataSources(ctx),
 		captiveportal.DataSources(ctx),
 		ids.DataSources(ctx),
 		interfaces.DataSources(ctx),
