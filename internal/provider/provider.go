@@ -13,6 +13,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/chrony"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/core"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/cron"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/crowdsec"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/dhcrelay"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/diagnostics"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/dnsmasq"
@@ -26,6 +27,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/kea"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/monit"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/nodeexporter"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/nut"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/openvpn"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/proxy"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/quagga"
@@ -34,10 +36,12 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/routing"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/syslog"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/tailscale"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/telegraf"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/trafficshaper"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/trust"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/unbound"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/wireguard"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/zerotier"
 	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
@@ -340,6 +344,10 @@ func (p *opnsenseProvider) Resources(ctx context.Context) []func() resource.Reso
 		dnsmasq.Resources(ctx),
 		firewall.Resources(ctx),
 		hasync.Resources(ctx),
+		zerotier.Resources(ctx),
+		telegraf.Resources(ctx),
+		nut.Resources(ctx),
+		crowdsec.Resources(ctx),
 		haproxy.Resources(ctx),
 		acmeclient.Resources(ctx),
 		caddy.Resources(ctx),
@@ -383,6 +391,10 @@ func (p *opnsenseProvider) DataSources(ctx context.Context) []func() datasource.
 		dnsmasq.DataSources(ctx),
 		firewall.DataSources(ctx),
 		hasync.DataSources(ctx),
+		zerotier.DataSources(ctx),
+		telegraf.DataSources(ctx),
+		nut.DataSources(ctx),
+		crowdsec.DataSources(ctx),
 		haproxy.DataSources(ctx),
 		acmeclient.DataSources(ctx),
 		caddy.DataSources(ctx),
