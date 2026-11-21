@@ -49,7 +49,7 @@ func authRemoteResourceSchema() schema.Schema {
 				MarkdownDescription: "Authentication round for the AuthRemote Resource.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString("1"),
+				Default:             stringdefault.StaticString("0"),
 			},
 			"authentication": schema.StringAttribute{
 				MarkdownDescription: "Authentication method for the AuthRemote Resource.",
@@ -58,10 +58,14 @@ func authRemoteResourceSchema() schema.Schema {
 			"auth_id": schema.StringAttribute{
 				MarkdownDescription: "Authentication ID for the AuthRemote Resource.",
 				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
 			},
 			"eap_id": schema.StringAttribute{
 				MarkdownDescription: "EAP ID for the AuthRemote Resource.",
 				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
 			},
 			"certificates": schema.SetAttribute{
 				ElementType:         types.StringType,

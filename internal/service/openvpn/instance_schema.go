@@ -6,11 +6,13 @@ import (
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/opnsense-go/pkg/openvpn"
 	"github.com/browningluke/terraform-provider-opnsense/internal/tools"
+	"github.com/hashicorp/terraform-plugin-framework-validators/int64validator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
@@ -110,10 +112,11 @@ func instanceResourceSchema() schema.Schema {
 				},
 			},
 			"vpn_id": schema.Int64Attribute{
-				MarkdownDescription: "Numeric VPN ID. Must be unique across all OpenVPN instances. The OPNsense web UI auto-assigns one; when managing instances via Terraform you should set this explicitly to keep ordering deterministic. Defaults to `-1` (auto).",
+				MarkdownDescription: "Numeric VPN ID, unique across all OpenVPN instances. When unset, OPNsense assigns the lowest free ID.",
 				Optional:            true,
 				Computed:            true,
-				Default:             int64default.StaticInt64(-1),
+				Validators:          []validator.Int64{int64validator.AtLeast(1)},
+				PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "Description of this instance. Defaults to `\"\"`.",
@@ -595,7 +598,7 @@ func convertInstanceSchemaToStruct(d *instanceResourceModel) (*openvpn.Instance,
 	return &openvpn.Instance{
 		Enabled:              tools.BoolToString(d.Enabled.ValueBool()),
 		Role:                 api.SelectedMap(d.Role.ValueString()),
-		VPNID:                tools.Int64ToStringNegative(d.VPNID.ValueInt64()),
+		VPNID:                vpnIDToString(d.VPNID),
 		Description:          d.Description.ValueString(),
 		DevType:              api.SelectedMap(d.DevType.ValueString()),
 		Protocol:             api.SelectedMap(d.Protocol.ValueString()),
@@ -723,4 +726,11 @@ func convertInstanceStructToSchema(d *openvpn.Instance) (*instanceResourceModel,
 		HTTPProxy:            types.StringValue(d.HTTPProxy),
 		VerifyX509Name:       types.StringValue(d.VerifyX509Name),
 	}, nil
+}
+
+func vpnIDToString(v types.Int64) string {
+	if v.IsNull() || v.IsUnknown() {
+		return ""
+	}
+	return tools.Int64ToString(v.ValueInt64())
 }

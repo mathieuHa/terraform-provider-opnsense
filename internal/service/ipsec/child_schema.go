@@ -104,12 +104,14 @@ func childResourceSchema() schema.Schema {
 			"request_id": schema.StringAttribute{
 				MarkdownDescription: "Request ID for the Child Resource.",
 				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
 			},
 			"rekey_time": schema.StringAttribute{
-				MarkdownDescription: "Rekey time for the Child Resource in seconds.",
+				MarkdownDescription: "Rekey time for the Child Resource in seconds. `0` disables rekeying. Defaults to `3600`, like OPNsense.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString("0"),
+				Default:             stringdefault.StaticString("3600"),
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "Optional description for the PSK.",

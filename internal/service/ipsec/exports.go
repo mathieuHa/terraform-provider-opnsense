@@ -14,6 +14,7 @@ func Resources(ctx context.Context) []func() resource.Resource {
 		newChildResource,
 		newConnectionResource,
 		newPskResource,
+		newSettingsResource,
 		newVtiResource,
 	}
 }

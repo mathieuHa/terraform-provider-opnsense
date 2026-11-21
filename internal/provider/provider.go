@@ -6,14 +6,14 @@ import (
 	"strconv"
 
 	"github.com/browningluke/opnsense-go/pkg/api"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/auth"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/core"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/cron"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/diagnostics"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/dnsmasq"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/firewall"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/interfaces"
-	"github.com/browningluke/terraform-provider-opnsense/internal/service/auth"
-	"github.com/browningluke/terraform-provider-opnsense/internal/service/core"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/ipsec"
-	"github.com/browningluke/terraform-provider-opnsense/internal/service/cron"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/kea"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/monit"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/openvpn"
@@ -57,6 +57,7 @@ type OPNsenseProviderModel struct {
 	MaxBackoff    types.Int64  `tfsdk:"max_backoff"`
 	MinBackoff    types.Int64  `tfsdk:"min_backoff"`
 	MaxRetries    types.Int64  `tfsdk:"retries"`
+	Timeout       types.Int64  `tfsdk:"request_timeout"`
 }
 
 func (p *opnsenseProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -105,6 +106,13 @@ func (p *opnsenseProvider) Schema(ctx context.Context, req provider.SchemaReques
 				Optional:            true,
 				Validators: []validator.Int64{
 					int64validator.Between(1, 2147483647), // Since we convert the int64 to an int(32), set an upper bound.
+				},
+			},
+			"request_timeout": schema.Int64Attribute{
+				MarkdownDescription: "Timeout in seconds for a single API request, including reading the response. A request that times out is retried. Alternatively, can be configured using the `OPNSENSE_REQUEST_TIMEOUT` environment variable. Defaults to `120`.",
+				Optional:            true,
+				Validators: []validator.Int64{
+					int64validator.AtLeast(1),
 				},
 			},
 		},
@@ -184,6 +192,15 @@ func (p *opnsenseProvider) Configure(ctx context.Context, req provider.Configure
 		)
 	}
 
+	if data.Timeout.IsUnknown() {
+		resp.Diagnostics.AddAttributeError(
+			path.Root("request_timeout"),
+			"Unknown OPNsense API Value: request_timeout",
+			"The provider cannot create the OPNsense API client as there is an unknown configuration value for request_timeout. "+
+				"Either target apply the source of the value first, set the value statically in the configuration, or use the OPNSENSE_REQUEST_TIMEOUT environment variable.",
+		)
+	}
+
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -245,6 +262,14 @@ func (p *opnsenseProvider) Configure(ctx context.Context, req provider.Configure
 		retries = data.MaxRetries.ValueInt64()
 	}
 
+	timeout, err := strconv.ParseInt(os.Getenv("OPNSENSE_REQUEST_TIMEOUT"), 10, 64)
+	if err != nil {
+		timeout = 0
+	}
+	if !data.Timeout.IsNull() {
+		timeout = data.Timeout.ValueInt64()
+	}
+
 	// Ensure expected variables are not empty
 
 	if uri == "" {
@@ -279,13 +304,14 @@ func (p *opnsenseProvider) Configure(ctx context.Context, req provider.Configure
 
 	// Create the OPNsense client
 	opnOptions := api.Options{
-		Uri:           uri,
-		APIKey:        apiKey,
-		APISecret:     apiSecret,
-		AllowInsecure: allowInsecure,
-		MaxBackoff:    maxBackoff,
-		MinBackoff:    minBackoff,
-		MaxRetries:    retries,
+		Uri:            uri,
+		APIKey:         apiKey,
+		APISecret:      apiSecret,
+		AllowInsecure:  allowInsecure,
+		MaxBackoff:     maxBackoff,
+		MinBackoff:     minBackoff,
+		MaxRetries:     retries,
+		RequestTimeout: timeout,
 	}
 	client := api.NewClient(opnOptions)
 

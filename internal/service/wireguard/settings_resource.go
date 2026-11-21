@@ -114,6 +114,12 @@ func (r *settingsResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
+	if err := r.client.Wireguard().Client().ReconfigureService(ctx, "/wireguard/service/reconfigure"); err != nil {
+		resp.Diagnostics.AddError("Client Error",
+			fmt.Sprintf("Unable to apply wireguard settings, got error: %s", err))
+		return
+	}
+
 	result, err := r.client.Wireguard().GeneralGet(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error",

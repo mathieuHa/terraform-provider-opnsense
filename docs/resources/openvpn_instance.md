@@ -112,7 +112,7 @@ resource "opnsense_openvpn_instance" "client" {
 - `various_push_flags` (Set of String) Miscellaneous push flags. Any of `block-ipv6`, `block-outside-dns`, `register-dns`, `explicit-exit-notify`. Defaults to `[]`.
 - `verify_client_cert` (String) Client certificate verification mode. One of `require` or `none`. Defaults to `require`.
 - `verify_x509_name` (String) Verify the peer certificate against this X509 name. Defaults to `""`.
-- `vpn_id` (Number) Numeric VPN ID. Must be unique across all OpenVPN instances. The OPNsense web UI auto-assigns one; when managing instances via Terraform you should set this explicitly to keep ordering deterministic. Defaults to `-1` (auto).
+- `vpn_id` (Number) Numeric VPN ID, unique across all OpenVPN instances. When unset, OPNsense assigns the lowest free ID.
 
 ### Read-Only
 

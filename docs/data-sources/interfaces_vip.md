@@ -18,9 +18,18 @@ Virtual IPs allow an OPNsense firewall to assign multiple IP addresses to the sa
 
 ### Read-Only
 
+- `advbase` (Number) CARP advertisement base in seconds.
+- `advskew` (Number) CARP advertisement skew.
 - `description` (String) Optional description here for your reference (not parsed).
 - `gateway` (String) For some interface types a gateway is required to configure an IP Alias (ppp/pppoe/tun), leave this field empty for all other interface types.
 - `interface` (String) Choose which interface this VIP applies to.
 - `mode` (String) Mode of the VIP. One of `ipalias`, `carp`, or `proxyarp`. `proxyarp` cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc. In most cases an `ipalias` should be used.
 - `network` (String) Provide an address and subnet to use. (e.g 192.168.0.1/24)
+- `no_bind` (Boolean) Whether services may not bind to this address.
+- `no_expand` (Boolean) Whether the subnet is not expanded in aliases and rules.
+- `no_sync` (Boolean) Whether the VIP is excluded from HA synchronisation.
+- `password` (String, Sensitive) CARP group password.
+- `peer` (String) Unicast IPv4 CARP peer.
+- `peer6` (String) Unicast IPv6 CARP peer.
+- `vhid` (Number) CARP virtual host ID.
 
