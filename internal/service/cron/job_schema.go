@@ -83,6 +83,8 @@ func jobResourceSchema() schema.Schema {
 			"description": schema.StringAttribute{
 				MarkdownDescription: "Description for this cron job.",
 				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
 			},
 			"id": schema.StringAttribute{
 				Computed:            true,
