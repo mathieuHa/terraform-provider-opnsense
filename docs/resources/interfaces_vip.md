@@ -36,10 +36,19 @@ resource "opnsense_interfaces_vip" "ipalias_example_vip" {
 
 ### Optional
 
+- `advbase` (Number) CARP advertisement base in seconds (`carp` mode). Defaults to `1`.
+- `advskew` (Number) CARP advertisement skew (`carp` mode). The member with the lowest skew becomes master. Defaults to `0`.
 - `description` (String) Optional description here for your reference (not parsed).
 - `gateway` (String) For some interface types a gateway is required to configure an IP Alias (ppp/pppoe/tun), leave this field empty for all other interface types.
 - `interface` (String) Choose which interface this VIP applies to.
-- `mode` (String) Mode of the VIP. One of `ipalias` or `proxyarp`. `proxyarp` cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc. In most cases an `ipalias` should be used.
+- `mode` (String) Mode of the VIP. One of `ipalias`, `carp` or `proxyarp`. `proxyarp` cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc. A `carp` VIP needs `vhid` and `password`.
+- `no_bind` (Boolean) Do not let services bind to this address, e.g. for addresses only used for NAT. Defaults to `false`.
+- `no_expand` (Boolean) Do not expand the subnet of this VIP into the interface network in aliases and rules. Defaults to `false`.
+- `no_sync` (Boolean) Exclude this VIP from HA configuration synchronisation. Defaults to `false`.
+- `password` (String, Sensitive) CARP group password, identical on all members (`carp` mode).
+- `peer` (String) Send CARP advertisements by unicast to this IPv4 peer instead of multicast (`carp` mode).
+- `peer6` (String) Send CARP advertisements by unicast to this IPv6 peer instead of multicast (`carp` mode).
+- `vhid` (Number) CARP virtual host ID, shared by all members of the CARP group (`carp` mode).
 
 ### Read-Only
 
