@@ -167,3 +167,34 @@ func EndpointPreCheck(t *testing.T, endpoint, requirement string) {
 		t.Skipf("%s not available (HTTP 404): %s", endpoint, requirement)
 	}
 }
+
+func InterfacePreCheck(t *testing.T, ifname string) {
+	t.Helper()
+	AccPreCheck(t)
+
+	req, err := http.NewRequest(http.MethodGet, os.Getenv("OPNSENSE_URI")+"/api/interfaces/assignment/get_item/"+ifname, nil)
+	if err != nil {
+		t.Fatalf("InterfacePreCheck: new request: %v", err)
+	}
+	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(os.Getenv("OPNSENSE_API_KEY")+":"+os.Getenv("OPNSENSE_API_SECRET"))))
+	client := &http.Client{Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: os.Getenv("OPNSENSE_ALLOW_INSECURE") == "true",
+		},
+		ForceAttemptHTTP2: true,
+	}}
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("InterfacePreCheck: %v", err)
+	}
+	defer resp.Body.Close()
+
+	var body struct {
+		Interface struct {
+			Identifier string `json:"identifier"`
+		} `json:"interface"`
+	}
+	if resp.StatusCode != http.StatusOK || json.NewDecoder(resp.Body).Decode(&body) != nil || body.Interface.Identifier != ifname {
+		t.Skipf("interface %s is not assigned on this firewall; this test needs a spare interface it can safely reconfigure", ifname)
+	}
+}
