@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import sys
+import tomllib
 
 import yaml
 
@@ -152,6 +153,35 @@ def plugins_table(items):
     return "\n".join(rows)
 
 
+def toml_value(v):
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    if isinstance(v, (int, float)):
+        return str(v)
+    if isinstance(v, str):
+        return json.dumps(v, ensure_ascii=False)
+    if isinstance(v, list):
+        return "[" + ", ".join(toml_value(x) for x in v) + "]"
+    if isinstance(v, dict):
+        return "{" + ", ".join(f"{json.dumps(k, ensure_ascii=False)} = {toml_value(x)}" for k, x in v.items()) + "}"
+    raise TypeError(type(v))
+
+
+def dump_toml(cfg):
+    out = []
+    for table, values in cfg.items():
+        out.append(f"[{table}]")
+        for k, v in values.items():
+            if k == "nav":
+                out.append("nav = [")
+                out += [f"  {toml_value(x)}," for x in v]
+                out.append("]")
+            else:
+                out.append(f"{json.dumps(k)} = {toml_value(v)}")
+        out.append("")
+    return "\n".join(out)
+
+
 def write(path, text):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     open(path, "w").write(text)
@@ -242,20 +272,19 @@ def main():
             write(os.path.join(DOCS, rel), text)
     order = ["guides/singletons.md", "guides/plugins.md"]
     guides.sort(key=lambda g: (order.index(g[1]) if g[1] in order else len(order), g[0]))
-    cfg = yaml.safe_load(open(os.path.join(SITE, "mkdocs.base.yml")))
-    cfg["docs_dir"] = "docs"
-    cfg["site_dir"] = os.path.join(BUILD, "public")
-    for ext in cfg["markdown_extensions"]:
-        if isinstance(ext, dict) and "pymdownx.snippets" in ext:
-            ext["pymdownx.snippets"]["base_path"] = [ROOT]
-    cfg["nav"] = [
+    cfg = tomllib.load(open(os.path.join(SITE, "zensical.base.toml"), "rb"))
+    project = cfg["project"]
+    project["docs_dir"] = "docs"
+    project["site_dir"] = "public"
+    project["markdown_extensions"]["pymdownx"]["snippets"]["base_path"] = [ROOT]
+    project["nav"] = [
         {"Home": "index.md"},
         {"Quickstart": "quickstart.md"},
         {"Guides": [{t: r} for t, r in guides]},
         {"Supported resources": "resources.md"},
         {"Reference": [{"Provider configuration": "reference/provider.md"}] + nav_reference(items)},
     ]
-    write(os.path.join(BUILD, "mkdocs.yml"), yaml.safe_dump(cfg, sort_keys=False, allow_unicode=True))
+    write(os.path.join(BUILD, "zensical.toml"), dump_toml(cfg))
     json.dump(stats, sys.stdout)
     print()
 
