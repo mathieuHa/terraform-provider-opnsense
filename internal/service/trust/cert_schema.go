@@ -4,11 +4,13 @@ import (
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/opnsense-go/pkg/trust"
 	"github.com/browningluke/terraform-provider-opnsense/internal/tools"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -80,7 +82,7 @@ func certResourceSchema() schema.Schema {
 				MarkdownDescription: "Reference ID (`ref_id`) of the signing CA. Required for `internal` and `sign_csr` actions.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString(""),
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"crt": schema.StringAttribute{
 				MarkdownDescription: "Base64-encoded PEM certificate body. Required when `action` is `import`. Computed when `action` is `internal`.",
@@ -110,6 +112,7 @@ func certResourceSchema() schema.Schema {
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString("internal"),
+				Validators:          []validator.String{stringvalidator.OneOf("internal", "external", "import", "sign_csr", "import_csr", "reissue", "manual")},
 			},
 			"key_type": schema.StringAttribute{
 				MarkdownDescription: "Key type and size: `512`, `1024`, `2048` (default), `3072`, `4096`, `8192`, `prime256v1`, `secp384r1`, `secp521r1`. Defaults to `2048`.",
@@ -142,69 +145,71 @@ func certResourceSchema() schema.Schema {
 				Default:             stringdefault.StaticString("firewall"),
 			},
 			"country": schema.StringAttribute{
-				MarkdownDescription: "ISO 3166-1 alpha-2 country code (e.g. `US`, `CA`, `DE`).",
+				MarkdownDescription: "ISO 3166-1 alpha-2 country code (e.g. `US`, `CA`, `DE`). Defaults to the OPNsense default, `NL`.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString(""),
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"state": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-				Default:  stringdefault.StaticString(""),
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"city": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-				Default:  stringdefault.StaticString(""),
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"organization": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-				Default:  stringdefault.StaticString(""),
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"organizational_unit": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-				Default:  stringdefault.StaticString(""),
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"email": schema.StringAttribute{
-				Optional: true,
-				Computed: true,
-				Default:  stringdefault.StaticString(""),
+				Optional:      true,
+				Computed:      true,
+				PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"common_name": schema.StringAttribute{
-				MarkdownDescription: "Common name (CN) for the certificate.",
-				Required:            true,
+				MarkdownDescription: "Common name (CN) for the certificate. Required unless the certificate is imported.",
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"ocsp_uri": schema.StringAttribute{
 				MarkdownDescription: "OCSP responder URI.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString(""),
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"altnames_dns": schema.StringAttribute{
 				MarkdownDescription: "DNS Subject Alternative Names, newline or CRLF separated (e.g. `www.example.com\\napi.example.com`).",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString(""),
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"altnames_ip": schema.StringAttribute{
 				MarkdownDescription: "IP Subject Alternative Names, newline separated.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString(""),
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"altnames_uri": schema.StringAttribute{
 				MarkdownDescription: "URI Subject Alternative Names, newline separated.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString(""),
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"altnames_email": schema.StringAttribute{
 				MarkdownDescription: "Email Subject Alternative Names, newline separated.",
 				Optional:            true,
 				Computed:            true,
-				Default:             stringdefault.StaticString(""),
+				PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 			},
 			"rfc3280_purpose": schema.StringAttribute{
 				MarkdownDescription: "Extended Key Usage OID string (e.g. `id-kp-serverAuth`, `id-kp-clientAuth`). Computed by OPNsense based on `cert_type` when not explicitly set.",
@@ -395,7 +400,7 @@ func certDataSourceSchema() dschema.Schema {
 }
 
 func convertCertSchemaToStruct(d *certResourceModel) (*trust.Cert, error) {
-	return &trust.Cert{
+	out := &trust.Cert{
 		Description:        d.Description.ValueString(),
 		CaRef:              api.SelectedMap(d.CaRef.ValueString()),
 		Crt:                d.Crt.ValueString(),
@@ -420,7 +425,14 @@ func convertCertSchemaToStruct(d *certResourceModel) (*trust.Cert, error) {
 		AltnamesUri:        d.AltnamesUri.ValueString(),
 		AltnamesEmail:      d.AltnamesEmail.ValueString(),
 		Rfc3280Purpose:     d.Rfc3280Purpose.ValueString(),
-	}, nil
+	}
+	if d.Action.ValueString() == "import" {
+		out.CrtPayload = pemText(out.Crt)
+		out.PrvPayload = pemText(out.Prv)
+		out.Crt = ""
+		out.Prv = ""
+	}
+	return out, nil
 }
 
 func convertCertStructToSchema(d *trust.Cert) (*certResourceModel, error) {
