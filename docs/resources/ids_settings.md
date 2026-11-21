@@ -33,12 +33,12 @@ resource "opnsense_ids_settings" "this" {
 ### Optional
 
 - `alert_logrotate` (String) Alert log rotation: `W0D23` (weekly) or `D0` (daily).
-- `alert_save_logs` (Number) Number of rotated alert logs to keep (1-1000).
-- `default_packet_size` (Number) Default packet size (82-65535), empty for the Suricata default.
+- `alert_save_logs` (Number) Number of rotated alert logs to keep (1-1000). `-1` when unset; set `-1` to clear it.
+- `default_packet_size` (Number) Default packet size (82-65535), empty for the Suricata default. `-1` when unset; set `-1` to clear it.
 - `detect_profile` (String) Detection profile: empty for the default, `low`, `medium`, `high` or `custom`.
-- `detect_toclient_groups` (Number) toclient-groups of the custom detection profile.
-- `detect_toserver_groups` (Number) toserver-groups of the custom detection profile.
-- `divert_listeners` (Number) Number of divert listeners (1-256), divert mode only.
+- `detect_toclient_groups` (Number) toclient-groups of the custom detection profile. `-1` when unset; set `-1` to clear it.
+- `detect_toserver_groups` (Number) toserver-groups of the custom detection profile. `-1` when unset; set `-1` to clear it.
+- `divert_listeners` (Number) Number of divert listeners (1-256), divert mode only. `-1` when unset; set `-1` to clear it.
 - `enabled` (Boolean) Enable the Suricata intrusion detection service.
 - `eve_http_dump_all_headers` (String) Headers dumped in HTTP logs: empty for none, `request`, `response` or `both`.
 - `eve_http_enabled` (Boolean) Log HTTP transactions to the eve log.

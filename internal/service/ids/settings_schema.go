@@ -60,10 +60,10 @@ func settingsAttributes() map[string]schema.Attribute {
 			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 		},
 		"divert_listeners": schema.Int64Attribute{
-			MarkdownDescription: "Number of divert listeners (1-256), divert mode only.",
+			MarkdownDescription: "Number of divert listeners (1-256), divert mode only. `-1` when unset; set `-1` to clear it.",
 			Optional:            true,
 			Computed:            true,
-			Validators:          []validator.Int64{int64validator.AtLeast(0)},
+			Validators:          []validator.Int64{int64validator.AtLeast(-1)},
 			PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 		},
 		"promiscuous": schema.BoolAttribute{
@@ -87,10 +87,10 @@ func settingsAttributes() map[string]schema.Attribute {
 			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"default_packet_size": schema.Int64Attribute{
-			MarkdownDescription: "Default packet size (82-65535), empty for the Suricata default.",
+			MarkdownDescription: "Default packet size (82-65535), empty for the Suricata default. `-1` when unset; set `-1` to clear it.",
 			Optional:            true,
 			Computed:            true,
-			Validators:          []validator.Int64{int64validator.AtLeast(0)},
+			Validators:          []validator.Int64{int64validator.AtLeast(-1)},
 			PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 		},
 		"update_cron": schema.StringAttribute{
@@ -106,10 +106,10 @@ func settingsAttributes() map[string]schema.Attribute {
 			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 		},
 		"alert_save_logs": schema.Int64Attribute{
-			MarkdownDescription: "Number of rotated alert logs to keep (1-1000).",
+			MarkdownDescription: "Number of rotated alert logs to keep (1-1000). `-1` when unset; set `-1` to clear it.",
 			Optional:            true,
 			Computed:            true,
-			Validators:          []validator.Int64{int64validator.AtLeast(0)},
+			Validators:          []validator.Int64{int64validator.AtLeast(-1)},
 			PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 		},
 		"pattern_matcher": schema.StringAttribute{
@@ -125,17 +125,17 @@ func settingsAttributes() map[string]schema.Attribute {
 			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 		},
 		"detect_toclient_groups": schema.Int64Attribute{
-			MarkdownDescription: "toclient-groups of the custom detection profile.",
+			MarkdownDescription: "toclient-groups of the custom detection profile. `-1` when unset; set `-1` to clear it.",
 			Optional:            true,
 			Computed:            true,
-			Validators:          []validator.Int64{int64validator.AtLeast(0)},
+			Validators:          []validator.Int64{int64validator.AtLeast(-1)},
 			PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 		},
 		"detect_toserver_groups": schema.Int64Attribute{
-			MarkdownDescription: "toserver-groups of the custom detection profile.",
+			MarkdownDescription: "toserver-groups of the custom detection profile. `-1` when unset; set `-1` to clear it.",
 			Optional:            true,
 			Computed:            true,
-			Validators:          []validator.Int64{int64validator.AtLeast(0)},
+			Validators:          []validator.Int64{int64validator.AtLeast(-1)},
 			PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 		},
 		"syslog_alerts": schema.BoolAttribute{
@@ -221,10 +221,17 @@ func settingsBool(b types.Bool) string {
 }
 
 func settingsInt(i types.Int64) string {
-	if i.IsNull() || i.IsUnknown() {
+	if i.IsNull() || i.IsUnknown() || i.ValueInt64() == -1 {
 		return ""
 	}
 	return tools.Int64ToString(i.ValueInt64())
+}
+
+func settingsReadInt(s string) types.Int64 {
+	if s == "" {
+		return types.Int64Value(-1)
+	}
+	return tools.StringToInt64Null(s)
 }
 
 func settingsList(s types.Set) []string {
@@ -289,18 +296,18 @@ func convertSettingsStructToSchema(s *ids.Settings) *settingsResourceModel {
 	return &settingsResourceModel{
 		Enabled:                 types.BoolValue(tools.StringToBool(s.General.Enabled)),
 		Mode:                    types.StringValue(s.General.Mode.String()),
-		DivertListeners:         tools.StringToInt64Null(s.General.DivertListeners),
+		DivertListeners:         settingsReadInt(s.General.DivertListeners),
 		Promiscuous:             types.BoolValue(tools.StringToBool(s.General.Promiscuous)),
 		Interfaces:              tools.StringSliceToSet(settingsNonEmpty(s.General.Interfaces)),
 		HomeNetworks:            tools.StringSliceToSet(settingsNonEmpty(s.General.HomeNetworks)),
-		DefaultPacketSize:       tools.StringToInt64Null(s.General.DefaultPacketSize),
+		DefaultPacketSize:       settingsReadInt(s.General.DefaultPacketSize),
 		UpdateCron:              types.StringValue(s.General.UpdateCron.String()),
 		AlertLogrotate:          types.StringValue(s.General.AlertLogrotate.String()),
-		AlertSaveLogs:           tools.StringToInt64Null(s.General.AlertSaveLogs),
+		AlertSaveLogs:           settingsReadInt(s.General.AlertSaveLogs),
 		PatternMatcher:          types.StringValue(s.General.PatternMatcher.String()),
 		DetectProfile:           types.StringValue(s.General.Detect.DetectProfile.String()),
-		DetectToclientGroups:    tools.StringToInt64Null(s.General.Detect.DetectToclientGroups),
-		DetectToserverGroups:    tools.StringToInt64Null(s.General.Detect.DetectToserverGroups),
+		DetectToclientGroups:    settingsReadInt(s.General.Detect.DetectToclientGroups),
+		DetectToserverGroups:    settingsReadInt(s.General.Detect.DetectToserverGroups),
 		SyslogAlerts:            types.BoolValue(tools.StringToBool(s.General.SyslogAlerts)),
 		SyslogEve:               types.BoolValue(tools.StringToBool(s.General.SyslogEve)),
 		LogPayload:              types.BoolValue(tools.StringToBool(s.General.LogPayload)),

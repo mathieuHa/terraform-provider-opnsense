@@ -4,16 +4,20 @@ import (
 	"context"
 	"strings"
 
+	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/opnsense-go/pkg/kea"
 	"github.com/browningluke/terraform-provider-opnsense/internal/tools"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -39,6 +43,21 @@ type dhcpv4SubnetResourceModel struct {
 	NextServer   types.String `tfsdk:"next_server"`
 	TFTPServer   types.String `tfsdk:"tftp_server"`
 	TFTPBootfile types.String `tfsdk:"tftp_bootfile"`
+
+	ValidLifetime              types.Int64  `tfsdk:"valid_lifetime"`
+	Allocator                  types.String `tfsdk:"allocator"`
+	DdnsForwardZone            types.String `tfsdk:"ddns_forward_zone"`
+	DdnsReverseZone            types.String `tfsdk:"ddns_reverse_zone"`
+	DdnsQualifyingSuffix       types.String `tfsdk:"ddns_qualifying_suffix"`
+	DdnsDnsServer              types.String `tfsdk:"ddns_dns_server"`
+	DdnsDnsPort                types.Int64  `tfsdk:"ddns_dns_port"`
+	DdnsDomainKeyName          types.String `tfsdk:"ddns_key_name"`
+	DdnsDomainKeySecret        types.String `tfsdk:"ddns_key_secret"`
+	DdnsDomainKeyAlgorithm     types.String `tfsdk:"ddns_key_algorithm"`
+	DdnsOverrideNoUpdate       types.Bool   `tfsdk:"ddns_override_no_update"`
+	DdnsOverrideClientUpdate   types.Bool   `tfsdk:"ddns_override_client_update"`
+	DdnsUpdateOnRenew          types.Bool   `tfsdk:"ddns_update_on_renew"`
+	DdnsConflictResolutionMode types.String `tfsdk:"ddns_conflict_resolution_mode"`
 
 	Description types.String `tfsdk:"description"`
 
@@ -162,6 +181,94 @@ func dhcpv4SubnetResourceSchema() schema.Schema {
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
 			},
+			"valid_lifetime": schema.Int64Attribute{
+				MarkdownDescription: "Lease lifetime in seconds for this subnet, `-1` for the server default. Defaults to `-1`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             int64default.StaticInt64(-1),
+			},
+			"allocator": schema.StringAttribute{
+				MarkdownDescription: "Address allocator: empty for the default, `iterative`, `random` or `flq` (free lease queue). Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+				Validators:          []validator.String{stringvalidator.OneOf("", "iterative", "random", "flq")},
+			},
+			"ddns_forward_zone": schema.StringAttribute{
+				MarkdownDescription: "Forward DNS zone updated by Kea DDNS, e.g. `lan.example.`. Requires `ddns_dns_server` and an enabled `opnsense_kea_ddns_settings`. Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+			},
+			"ddns_reverse_zone": schema.StringAttribute{
+				MarkdownDescription: "Reverse DNS zone, e.g. `1.168.192.in-addr.arpa.`. Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+			},
+			"ddns_qualifying_suffix": schema.StringAttribute{
+				MarkdownDescription: "Suffix appended to unqualified client host names. Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+			},
+			"ddns_dns_server": schema.StringAttribute{
+				MarkdownDescription: "Address of the DNS server that receives the updates. Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+			},
+			"ddns_dns_port": schema.Int64Attribute{
+				MarkdownDescription: "Port of the DNS server, `-1` for 53. Defaults to `-1`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             int64default.StaticInt64(-1),
+			},
+			"ddns_key_name": schema.StringAttribute{
+				MarkdownDescription: "TSIG key name. Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+			},
+			"ddns_key_secret": schema.StringAttribute{
+				MarkdownDescription: "TSIG key secret, base64-encoded. Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+				Sensitive:           true,
+			},
+			"ddns_key_algorithm": schema.StringAttribute{
+				MarkdownDescription: "TSIG algorithm: `hmac-md5`, `hmac-sha1`, `hmac-sha224`, `hmac-sha256`, `hmac-sha384` or `hmac-sha512`. Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+				Validators:          []validator.String{stringvalidator.OneOf("", "hmac-md5", "hmac-sha1", "hmac-sha224", "hmac-sha256", "hmac-sha384", "hmac-sha512")},
+			},
+			"ddns_override_no_update": schema.BoolAttribute{
+				MarkdownDescription: "Update DNS even when the client asks for no update. Defaults to `false`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             booldefault.StaticBool(false),
+			},
+			"ddns_override_client_update": schema.BoolAttribute{
+				MarkdownDescription: "Update DNS even when the client wants to do it itself. Defaults to `false`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             booldefault.StaticBool(false),
+			},
+			"ddns_update_on_renew": schema.BoolAttribute{
+				MarkdownDescription: "Send DNS updates on every renewal, not only for new leases. Defaults to `false`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             booldefault.StaticBool(false),
+			},
+			"ddns_conflict_resolution_mode": schema.StringAttribute{
+				MarkdownDescription: "Conflict resolution: empty for `check-with-dhcid`, `no-check-with-dhcid`, `check-exists-with-dhcid` or `no-check-without-dhcid`. Defaults to `\"\"`.",
+				Optional:            true,
+				Computed:            true,
+				Default:             stringdefault.StaticString(""),
+				Validators:          []validator.String{stringvalidator.OneOf("", "no-check-with-dhcid", "check-exists-with-dhcid", "no-check-without-dhcid")},
+			},
 			"id": schema.StringAttribute{
 				Computed:            true,
 				MarkdownDescription: "UUID of the subnet.",
@@ -260,6 +367,20 @@ func dhcpv4SubnetDataSourceSchema() dschema.Schema {
 				MarkdownDescription: "Optional description here for your reference (not parsed).",
 				Computed:            true,
 			},
+			"valid_lifetime":                dschema.Int64Attribute{MarkdownDescription: "Lease lifetime in seconds for this subnet, `-1` for the server default.", Computed: true},
+			"allocator":                     dschema.StringAttribute{MarkdownDescription: "Address allocator: empty for the default, `iterative`, `random` or `flq` (free lease queue).", Computed: true},
+			"ddns_forward_zone":             dschema.StringAttribute{MarkdownDescription: "Forward DNS zone updated by Kea DDNS, e.g. `lan.example.`. Requires `ddns_dns_server` and an enabled `opnsense_kea_ddns_settings`.", Computed: true},
+			"ddns_reverse_zone":             dschema.StringAttribute{MarkdownDescription: "Reverse DNS zone, e.g. `1.168.192.in-addr.arpa.`.", Computed: true},
+			"ddns_qualifying_suffix":        dschema.StringAttribute{MarkdownDescription: "Suffix appended to unqualified client host names.", Computed: true},
+			"ddns_dns_server":               dschema.StringAttribute{MarkdownDescription: "Address of the DNS server that receives the updates.", Computed: true},
+			"ddns_dns_port":                 dschema.Int64Attribute{MarkdownDescription: "Port of the DNS server, `-1` for 53.", Computed: true},
+			"ddns_key_name":                 dschema.StringAttribute{MarkdownDescription: "TSIG key name.", Computed: true},
+			"ddns_key_secret":               dschema.StringAttribute{MarkdownDescription: "TSIG key secret, base64-encoded.", Computed: true, Sensitive: true},
+			"ddns_key_algorithm":            dschema.StringAttribute{MarkdownDescription: "TSIG algorithm: `hmac-md5`, `hmac-sha1`, `hmac-sha224`, `hmac-sha256`, `hmac-sha384` or `hmac-sha512`.", Computed: true},
+			"ddns_override_no_update":       dschema.BoolAttribute{MarkdownDescription: "Update DNS even when the client asks for no update.", Computed: true},
+			"ddns_override_client_update":   dschema.BoolAttribute{MarkdownDescription: "Update DNS even when the client wants to do it itself.", Computed: true},
+			"ddns_update_on_renew":          dschema.BoolAttribute{MarkdownDescription: "Send DNS updates on every renewal, not only for new leases.", Computed: true},
+			"ddns_conflict_resolution_mode": dschema.StringAttribute{MarkdownDescription: "Conflict resolution: empty for `check-with-dhcid`, `no-check-with-dhcid`, `check-exists-with-dhcid` or `no-check-without-dhcid`.", Computed: true},
 		},
 	}
 }
@@ -291,7 +412,21 @@ func convertDhcpv4SubnetSchemaToStruct(d *dhcpv4SubnetResourceModel) (*kea.Subne
 			TftpServerName:    d.TFTPServer.ValueString(),
 			BootFileName:      d.TFTPBootfile.ValueString(),
 		},
-		Description: d.Description.ValueString(),
+		ValidLifetime:              tools.Int64ToStringNegative(d.ValidLifetime.ValueInt64()),
+		Allocator:                  api.SelectedMap(d.Allocator.ValueString()),
+		DdnsForwardZone:            d.DdnsForwardZone.ValueString(),
+		DdnsReverseZone:            d.DdnsReverseZone.ValueString(),
+		DdnsQualifyingSuffix:       d.DdnsQualifyingSuffix.ValueString(),
+		DdnsDnsServer:              d.DdnsDnsServer.ValueString(),
+		DdnsDnsPort:                tools.Int64ToStringNegative(d.DdnsDnsPort.ValueInt64()),
+		DdnsDomainKeyName:          d.DdnsDomainKeyName.ValueString(),
+		DdnsDomainKeySecret:        d.DdnsDomainKeySecret.ValueString(),
+		DdnsDomainKeyAlgorithm:     api.SelectedMap(d.DdnsDomainKeyAlgorithm.ValueString()),
+		DdnsOverrideNoUpdate:       tools.BoolToString(d.DdnsOverrideNoUpdate.ValueBool()),
+		DdnsOverrideClientUpdate:   tools.BoolToString(d.DdnsOverrideClientUpdate.ValueBool()),
+		DdnsUpdateOnRenew:          tools.BoolToString(d.DdnsUpdateOnRenew.ValueBool()),
+		DdnsConflictResolutionMode: api.SelectedMap(d.DdnsConflictResolutionMode.ValueString()),
+		Description:                d.Description.ValueString(),
 	}, nil
 }
 
@@ -311,6 +446,21 @@ func convertDhcpv4SubnetStructToSchema(d *kea.SubnetV4) (*dhcpv4SubnetResourceMo
 		TFTPServer:        types.StringValue(d.OptionData.TftpServerName),
 		TFTPBootfile:      types.StringValue(d.OptionData.BootFileName),
 		Description:       types.StringValue(d.Description),
+
+		ValidLifetime:              types.Int64Value(tools.StringToInt64(d.ValidLifetime)),
+		Allocator:                  types.StringValue(d.Allocator.String()),
+		DdnsForwardZone:            types.StringValue(d.DdnsForwardZone),
+		DdnsReverseZone:            types.StringValue(d.DdnsReverseZone),
+		DdnsQualifyingSuffix:       types.StringValue(d.DdnsQualifyingSuffix),
+		DdnsDnsServer:              types.StringValue(d.DdnsDnsServer),
+		DdnsDnsPort:                types.Int64Value(tools.StringToInt64(d.DdnsDnsPort)),
+		DdnsDomainKeyName:          types.StringValue(d.DdnsDomainKeyName),
+		DdnsDomainKeySecret:        types.StringValue(d.DdnsDomainKeySecret),
+		DdnsDomainKeyAlgorithm:     types.StringValue(d.DdnsDomainKeyAlgorithm.String()),
+		DdnsOverrideNoUpdate:       types.BoolValue(tools.StringToBool(d.DdnsOverrideNoUpdate)),
+		DdnsOverrideClientUpdate:   types.BoolValue(tools.StringToBool(d.DdnsOverrideClientUpdate)),
+		DdnsUpdateOnRenew:          types.BoolValue(tools.StringToBool(d.DdnsUpdateOnRenew)),
+		DdnsConflictResolutionMode: types.StringValue(d.DdnsConflictResolutionMode.String()),
 	}
 
 	v, _ := types.SetValue(
