@@ -47,3 +47,4 @@ __pycache__/
 docs/plans
 
 .envrc
+/site/build/
