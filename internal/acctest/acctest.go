@@ -198,3 +198,36 @@ func InterfacePreCheck(t *testing.T, ifname string) {
 		t.Skipf("interface %s is not assigned on this firewall; this test needs a spare interface it can safely reconfigure", ifname)
 	}
 }
+
+func OptionPreCheck(t *testing.T, endpoint, monad, field string, values ...string) {
+	t.Helper()
+	AccPreCheck(t)
+
+	req, err := http.NewRequest(http.MethodGet, os.Getenv("OPNSENSE_URI")+"/api"+endpoint, nil)
+	if err != nil {
+		t.Fatalf("OptionPreCheck: new request: %v", err)
+	}
+	req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(os.Getenv("OPNSENSE_API_KEY")+":"+os.Getenv("OPNSENSE_API_SECRET"))))
+	client := &http.Client{Transport: &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: os.Getenv("OPNSENSE_ALLOW_INSECURE") == "true"},
+	}}
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("OptionPreCheck: %s: %v", endpoint, err)
+	}
+	defer resp.Body.Close()
+
+	var body map[string]map[string]json.RawMessage
+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		t.Skipf("%s: unexpected response: %v", endpoint, err)
+	}
+	var options map[string]json.RawMessage
+	if err := json.Unmarshal(body[monad][field], &options); err != nil {
+		t.Skipf("%s: %s.%s has no options", endpoint, monad, field)
+	}
+	for _, v := range values {
+		if _, ok := options[v]; !ok {
+			t.Skipf("%s: option %q not available for %s.%s", endpoint, v, monad, field)
+		}
+	}
+}

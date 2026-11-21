@@ -17,6 +17,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/kea"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/monit"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/openvpn"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/proxy"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/quagga"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/routes"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/routing"
@@ -336,6 +337,7 @@ func (p *opnsenseProvider) Resources(ctx context.Context) []func() resource.Reso
 		quagga.Resources(ctx),
 		routes.Resources(ctx),
 		routing.Resources(ctx),
+		proxy.Resources(ctx),
 		syslog.Resources(ctx),
 		trafficshaper.Resources(ctx),
 		trust.Resources(ctx),
@@ -366,6 +368,7 @@ func (p *opnsenseProvider) DataSources(ctx context.Context) []func() datasource.
 		quagga.DataSources(ctx),
 		routes.DataSources(ctx),
 		routing.DataSources(ctx),
+		proxy.DataSources(ctx),
 		syslog.DataSources(ctx),
 		trafficshaper.DataSources(ctx),
 		trust.DataSources(ctx),
