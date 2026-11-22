@@ -32,7 +32,7 @@ resource "opnsense_haproxy_backend" "web" {
 ### Optional
 
 - `algorithm` (String) Define the load balancing algorithm to be used in a Backend Pool. See the HAProxy documentation for a full description. One of `source`, `roundrobin`, `static-rr`, `leastconn`, `uri`, `random`. Defaults to `source`.
-- `ba_advertised_protocols` (Set of String) When using the TLS ALPN extension, HAProxy advertises the specified protocol list as supported on top of ALPN. TLS must be enabled. One of `h2`, `http11`, `http10`. Defaults to `[]`.
+- `ba_advertised_protocols` (Set of String) When using the TLS ALPN extension, HAProxy advertises the specified protocol list as supported on top of ALPN. TLS must be enabled. One of `h2`, `http11`, `http10`. Defaults to `["h2", "http11"]`.
 - `basic_auth_enabled` (Boolean) Enable HTTP Basic Authentication. Defaults to `false`.
 - `basic_auth_groups` (Set of String) Allowed Groups. Defaults to `[]`.
 - `basic_auth_users` (Set of String) Allowed Users. Defaults to `[]`.

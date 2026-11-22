@@ -26,6 +26,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/ipsec"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/kea"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/monit"
+	"github.com/browningluke/terraform-provider-opnsense/internal/service/nginx"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/nodeexporter"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/nut"
 	"github.com/browningluke/terraform-provider-opnsense/internal/service/openvpn"
@@ -344,6 +345,7 @@ func (p *opnsenseProvider) Resources(ctx context.Context) []func() resource.Reso
 		dnsmasq.Resources(ctx),
 		firewall.Resources(ctx),
 		hasync.Resources(ctx),
+		nginx.Resources(ctx),
 		zerotier.Resources(ctx),
 		telegraf.Resources(ctx),
 		nut.Resources(ctx),
@@ -391,6 +393,7 @@ func (p *opnsenseProvider) DataSources(ctx context.Context) []func() datasource.
 		dnsmasq.DataSources(ctx),
 		firewall.DataSources(ctx),
 		hasync.DataSources(ctx),
+		nginx.DataSources(ctx),
 		zerotier.DataSources(ctx),
 		telegraf.DataSources(ctx),
 		nut.DataSources(ctx),

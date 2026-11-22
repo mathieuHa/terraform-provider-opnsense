@@ -86,7 +86,7 @@ resource "opnsense_telegraf_output" "this" {
 - `opentelemetry_server` (String) For gRPC, set the address and port, e.g. 192.168.0.1:4317. For HTTP, use a full URL, e.g. https://collector.example.com/v1/metrics.
 - `opentelemetry_timeout` (Number) Write timeout, formatted as a string. If not provided, will default to 5s. 0s means no timeout (not recommended). `-1` when unset; set `-1` to clear it.
 - `prometheus_enable` (Boolean) This will enable Prometheus as output.
-- `prometheus_exclude` (String) Collectors to enable, valid entries are "gocollector" and "process". If unset, both are enabled.
+- `prometheus_exclude` (Set of String) Collectors to enable, valid entries are "gocollector" and "process". If unset, both are enabled.
 - `prometheus_listen` (Number) Port to listen on. `-1` when unset; set `-1` to clear it.
 - `prometheus_stringaslabel` (Boolean) Send string metrics as Prometheus labels.
 

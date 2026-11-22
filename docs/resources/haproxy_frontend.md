@@ -34,7 +34,7 @@ resource "opnsense_haproxy_frontend" "https" {
 
 ### Optional
 
-- `advertised_protocols` (Set of String) When using the TLS ALPN extension, HAProxy advertises the specified protocol list as supported on top of ALPN. SSL offloading must be enabled. Note that HTTP/3 will only be added to QUIC-compatible Listening Addresses. One of `h3`, `h2`, `http11`, `http10`. Defaults to `[]`.
+- `advertised_protocols` (Set of String) When using the TLS ALPN extension, HAProxy advertises the specified protocol list as supported on top of ALPN. SSL offloading must be enabled. Note that HTTP/3 will only be added to QUIC-compatible Listening Addresses. One of `h3`, `h2`, `http11`, `http10`. Defaults to `["h2", "http11"]`.
 - `basic_auth_enabled` (Boolean) Enable HTTP Basic Authentication. Defaults to `false`.
 - `basic_auth_groups` (Set of String) Allowed Groups. Defaults to `[]`.
 - `basic_auth_users` (Set of String) Allowed Users. Defaults to `[]`.
@@ -59,7 +59,7 @@ resource "opnsense_haproxy_frontend" "https" {
 - `prometheus_enabled` (Boolean) Enable HAProxy's Prometheus exporter. Defaults to `false`.
 - `prometheus_path` (String) The path where the Prometheus exporter can be accessed. Defaults to `/metrics`.
 - `ssl_advanced_enabled` (Boolean) Enable advanced SSL settings. Defaults to `false`.
-- `ssl_bind_options` (Set of String) Used to enforce or disable certain SSL options. One of `no-sslv3`, `no-tlsv10`, `no-tlsv11`, `no-tlsv12`, `no-tlsv13`, `no-tls-tickets`, `force-sslv3`, `force-tlsv10`, `force-tlsv11`, `force-tlsv12`, `force-tlsv13`, `prefer-client-ciphers`, `strict-sni`. Defaults to `[]`.
+- `ssl_bind_options` (Set of String) Used to enforce or disable certain SSL options. One of `no-sslv3`, `no-tlsv10`, `no-tlsv11`, `no-tlsv12`, `no-tlsv13`, `no-tls-tickets`, `force-sslv3`, `force-tlsv10`, `force-tlsv11`, `force-tlsv12`, `force-tlsv13`, `prefer-client-ciphers`, `strict-sni`. Defaults to `["prefer-client-ciphers"]`.
 - `ssl_certificates` (Set of String) Select certificates to use for SSL offloading. HAProxy's SNI recognition will determine the correct certificate automatically. If no SNI is provided by the client then the first certificate will be presented.To import additional certificates, go to Certificate Manager. Defaults to `[]`.
 - `ssl_cipher_list` (String) It sets the default string describing the list of cipher algorithms ("cipher suite") that are negotiated during the SSL/TLS handshake up to TLSv1.2. Defaults to `ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256`.
 - `ssl_cipher_suites` (String) It sets the default string describing the list of cipher algorithms ("cipher suite") that are negotiated during the SSL/TLS handshake for TLSv1.3. Defaults to `TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256`.
