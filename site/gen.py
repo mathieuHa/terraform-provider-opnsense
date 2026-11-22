@@ -30,6 +30,8 @@ SERVICES = {
     "kea": ("Kea DHCP", "core", None),
     "monit": ("Monit", "core", None),
     "openvpn": ("OpenVPN", "core", None),
+    "netflow": ("NetFlow & health graphs", "core", None),
+    "systemhealth": ("NetFlow & health graphs", "core", None),
     "radvd": ("Router advertisements", "core", None),
     "route": ("Routing", "core", None),
     "routing": ("Routing", "core", None),

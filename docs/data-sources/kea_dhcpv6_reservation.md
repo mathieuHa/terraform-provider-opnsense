@@ -31,4 +31,5 @@ data "opnsense_kea_dhcpv6_reservation" "example" {
 - `duid` (String) DHCP Unique Identifier (DUID) of the client.
 - `hostname` (String) Hostname to offer to the client.
 - `ip_address` (String) IPv6 address to offer to the client.
+- `options` (Set of String) UUIDs of the custom options sent to the clients.
 - `subnet_id` (String) Subnet ID the reservation belongs to.

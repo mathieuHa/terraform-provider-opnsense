@@ -47,6 +47,7 @@ resource "opnsense_kea_dhcpv6_subnet" "lan" {
 - `description` (String) Optional description.
 - `domain_search` (Set of String) Domain search list. Defaults to `[]`.
 - `hostname` (String) Hostname to offer to the client. Defaults to `""`.
+- `options` (Set of String) UUIDs of `opnsense_kea_dhcpv6_option` resources sent to the clients. Defaults to `[]`.
 
 ### Read-Only
 

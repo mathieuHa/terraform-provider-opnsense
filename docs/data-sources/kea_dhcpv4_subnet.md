@@ -47,6 +47,7 @@ data "opnsense_kea_dhcpv4_subnet" "example" {
 - `match_client_id` (Boolean) Whether to match on client-identifier.
 - `next_server` (String) Next server IP address.
 - `ntp_servers` (Set of String) Set of IP addresses indicating NTP servers available to the client.
+- `options` (Set of String) UUIDs of the custom options sent to the clients.
 - `pools` (Set of String) Set of pools in range or subnet format.
 - `routers` (Set of String) Default gateways to offer to the clients.
 - `static_routes` (Attributes Set) Static routes that the client should install in its routing cache. (see [below for nested schema](#nestedatt--static_routes))

@@ -1,0 +1,7 @@
+resource "opnsense_trust_crl" "internal" {
+  ca          = opnsense_trust_ca.internal.ref_id
+  description = "Internal CA revocations"
+  revoked = [
+    { certificate = opnsense_trust_cert.lost_laptop.ref_id, reason = "keyCompromise" },
+  ]
+}

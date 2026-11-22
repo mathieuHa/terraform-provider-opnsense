@@ -30,4 +30,5 @@ data "opnsense_kea_dhcpv4_reservation" "example" {
 - `hostname` (String) Hostname to offer to the client.
 - `ip_address` (String) IP address to offer to the client.
 - `mac_address` (String) MAC/Ether address of the client in question.
+- `options` (Set of String) UUIDs of the custom options sent to the clients.
 - `subnet_id` (String) Subnet ID the reservation belongs to.

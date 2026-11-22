@@ -26,6 +26,8 @@ func Resources(ctx context.Context) []func() resource.Resource {
 		newDhcpv6SettingsResource,
 		newCtrlAgentSettingsResource,
 		newDdnsSettingsResource,
+		newDhcpv4OptionResource,
+		newDhcpv6OptionResource,
 	}
 }
 
@@ -44,5 +46,7 @@ func DataSources(ctx context.Context) []func() datasource.DataSource {
 		newDhcpv6ReservationDataSource,
 		newDhcpv6SubnetDataSource,
 		newDhcpv6PdPoolDataSource,
+		newDhcpv4OptionDataSource,
+		newDhcpv6OptionDataSource,
 	}
 }
