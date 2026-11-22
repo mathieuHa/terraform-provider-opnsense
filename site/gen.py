@@ -43,6 +43,7 @@ SERVICES = {
     "chrony": ("Chrony", "plugin", "os-chrony"),
     "crowdsec": ("CrowdSec", "plugin", "os-crowdsec"),
     "haproxy": ("HAProxy", "plugin", "os-haproxy"),
+    "nginx": ("nginx", "plugin", "os-nginx"),
     "nodeexporter": ("Prometheus node exporter", "plugin", "os-node_exporter"),
     "nut": ("Network UPS Tools", "plugin", "os-nut"),
     "proxy": ("Squid web proxy", "plugin", "os-squid"),
