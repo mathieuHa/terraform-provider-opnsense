@@ -72,6 +72,9 @@ func TestAccHAProxyStack(t *testing.T) {
 					resource.TestCheckResourceAttrPair(b, "health_check", "opnsense_haproxy_healthcheck.http", "id"),
 					resource.TestCheckResourceAttr(b, "algorithm", "roundrobin"),
 					resource.TestCheckResourceAttr(f, "ssl_min_version", "TLSv1.2"),
+					resource.TestCheckResourceAttr(f, "advertised_protocols.#", "2"),
+					resource.TestCheckTypeSetElemAttr(f, "advertised_protocols.*", "h2"),
+					resource.TestCheckTypeSetElemAttr(f, "ssl_bind_options.*", "prefer-client-ciphers"),
 				),
 			},
 			{

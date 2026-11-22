@@ -6,6 +6,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/tools"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -169,11 +170,11 @@ func frontendResourceSchema() schema.Schema {
 				Default:             booldefault.StaticBool(false),
 			},
 			"ssl_bind_options": schema.SetAttribute{
-				MarkdownDescription: "Used to enforce or disable certain SSL options. One of `no-sslv3`, `no-tlsv10`, `no-tlsv11`, `no-tlsv12`, `no-tlsv13`, `no-tls-tickets`, `force-sslv3`, `force-tlsv10`, `force-tlsv11`, `force-tlsv12`, `force-tlsv13`, `prefer-client-ciphers`, `strict-sni`. Defaults to `[]`.",
+				MarkdownDescription: "Used to enforce or disable certain SSL options. One of `no-sslv3`, `no-tlsv10`, `no-tlsv11`, `no-tlsv12`, `no-tlsv13`, `no-tls-tickets`, `force-sslv3`, `force-tlsv10`, `force-tlsv11`, `force-tlsv12`, `force-tlsv13`, `prefer-client-ciphers`, `strict-sni`. Defaults to `[\"prefer-client-ciphers\"]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
+				Default:             setdefault.StaticValue(types.SetValueMust(types.StringType, []attr.Value{types.StringValue("prefer-client-ciphers")})),
 				Validators:          []validator.Set{setvalidator.ValueStringsAre(stringvalidator.OneOf("no-sslv3", "no-tlsv10", "no-tlsv11", "no-tlsv12", "no-tlsv13", "no-tls-tickets", "force-sslv3", "force-tlsv10", "force-tlsv11", "force-tlsv12", "force-tlsv13", "prefer-client-ciphers", "strict-sni"))},
 			},
 			"ssl_min_version": schema.StringAttribute{
@@ -464,11 +465,11 @@ func frontendResourceSchema() schema.Schema {
 				Default:             booldefault.StaticBool(false),
 			},
 			"advertised_protocols": schema.SetAttribute{
-				MarkdownDescription: "When using the TLS ALPN extension, HAProxy advertises the specified protocol list as supported on top of ALPN. SSL offloading must be enabled. Note that HTTP/3 will only be added to QUIC-compatible Listening Addresses. One of `h3`, `h2`, `http11`, `http10`. Defaults to `[]`.",
+				MarkdownDescription: "When using the TLS ALPN extension, HAProxy advertises the specified protocol list as supported on top of ALPN. SSL offloading must be enabled. Note that HTTP/3 will only be added to QUIC-compatible Listening Addresses. One of `h3`, `h2`, `http11`, `http10`. Defaults to `[\"h2\", \"http11\"]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
+				Default:             setdefault.StaticValue(types.SetValueMust(types.StringType, []attr.Value{types.StringValue("h2"), types.StringValue("http11")})),
 				Validators:          []validator.Set{setvalidator.ValueStringsAre(stringvalidator.OneOf("h3", "h2", "http11", "http10"))},
 			},
 			"forward_for": schema.BoolAttribute{

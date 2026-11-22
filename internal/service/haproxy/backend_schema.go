@@ -6,6 +6,7 @@ import (
 	"github.com/browningluke/terraform-provider-opnsense/internal/tools"
 	"github.com/hashicorp/terraform-plugin-framework-validators/setvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
@@ -244,11 +245,11 @@ func backendResourceSchema() schema.Schema {
 				Default:             booldefault.StaticBool(false),
 			},
 			"ba_advertised_protocols": schema.SetAttribute{
-				MarkdownDescription: "When using the TLS ALPN extension, HAProxy advertises the specified protocol list as supported on top of ALPN. TLS must be enabled. One of `h2`, `http11`, `http10`. Defaults to `[]`.",
+				MarkdownDescription: "When using the TLS ALPN extension, HAProxy advertises the specified protocol list as supported on top of ALPN. TLS must be enabled. One of `h2`, `http11`, `http10`. Defaults to `[\"h2\", \"http11\"]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,
-				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
+				Default:             setdefault.StaticValue(types.SetValueMust(types.StringType, []attr.Value{types.StringValue("h2"), types.StringValue("http11")})),
 				Validators:          []validator.Set{setvalidator.ValueStringsAre(stringvalidator.OneOf("h2", "http11", "http10"))},
 			},
 			"forward_for": schema.BoolAttribute{

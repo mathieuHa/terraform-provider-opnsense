@@ -41,7 +41,7 @@ type outputSettingsResourceModel struct {
 	ElasticIndexname                types.String `tfsdk:"elastic_indexname"`
 	PrometheusEnable                types.Bool   `tfsdk:"prometheus_enable"`
 	PrometheusListen                types.Int64  `tfsdk:"prometheus_listen"`
-	PrometheusExclude               types.String `tfsdk:"prometheus_exclude"`
+	PrometheusExclude               types.Set    `tfsdk:"prometheus_exclude"`
 	PrometheusStringaslabel         types.Bool   `tfsdk:"prometheus_stringaslabel"`
 	InfluxV2Enable                  types.Bool   `tfsdk:"influx_v2_enable"`
 	InfluxV2Url                     types.String `tfsdk:"influx_v2_url"`
@@ -234,11 +234,12 @@ func outputSettingsAttributes() map[string]schema.Attribute {
 			Validators:          []validator.Int64{int64validator.AtLeast(-1)},
 			PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 		},
-		"prometheus_exclude": schema.StringAttribute{
+		"prometheus_exclude": schema.SetAttribute{
 			MarkdownDescription: "Collectors to enable, valid entries are \"gocollector\" and \"process\". If unset, both are enabled.",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"prometheus_stringaslabel": schema.BoolAttribute{
 			MarkdownDescription: "Send string metrics as Prometheus labels.",
@@ -468,7 +469,7 @@ func convertOutputSettingsSchemaToStruct(d *outputSettingsResourceModel) *telegr
 		ElasticIndexname:                d.ElasticIndexname.ValueString(),
 		PrometheusEnable:                settingsBool(d.PrometheusEnable),
 		PrometheusListen:                settingsInt(d.PrometheusListen),
-		PrometheusExclude:               api.SelectedMap(d.PrometheusExclude.ValueString()),
+		PrometheusExclude:               api.SelectedMapList(settingsList(d.PrometheusExclude)),
 		PrometheusStringaslabel:         settingsBool(d.PrometheusStringaslabel),
 		InfluxV2Enable:                  settingsBool(d.InfluxV2Enable),
 		InfluxV2Url:                     d.InfluxV2Url.ValueString(),
@@ -530,7 +531,7 @@ func convertOutputSettingsStructToSchema(s *telegraf.OutputSettings) *outputSett
 		ElasticIndexname:                types.StringValue(s.ElasticIndexname),
 		PrometheusEnable:                types.BoolValue(tools.StringToBool(s.PrometheusEnable)),
 		PrometheusListen:                settingsReadInt(s.PrometheusListen),
-		PrometheusExclude:               types.StringValue(s.PrometheusExclude.String()),
+		PrometheusExclude:               tools.StringSliceToSet(settingsNonEmpty(s.PrometheusExclude)),
 		PrometheusStringaslabel:         types.BoolValue(tools.StringToBool(s.PrometheusStringaslabel)),
 		InfluxV2Enable:                  types.BoolValue(tools.StringToBool(s.InfluxV2Enable)),
 		InfluxV2Url:                     types.StringValue(s.InfluxV2Url),

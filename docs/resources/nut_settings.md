@@ -32,19 +32,19 @@ resource "opnsense_nut_settings" "this" {
 
 - `account_admin_password` (String, Sensitive) Set the password for admin user "admin".
 - `account_mon_password` (String, Sensitive) Set the password for monitoring user "monuser".
-- `apcsmart_args` (String) Set extra arguments for this UPS, e.g. "port=auto".
+- `apcsmart_args` (Set of String) Set extra arguments for this UPS, e.g. "port=auto".
 - `apcsmart_enable` (Boolean) Enable the APCSMART driver.
 - `apcupsd_enable` (Boolean) Enable the APCUPSD controlled devices driver.
 - `apcupsd_hostname` (String) Set the hostname or ip of the remote apcupsd server.
 - `apcupsd_port` (Number) Set the port of the remote apcupsd server (optional). `-1` when unset; set `-1` to clear it.
-- `bcmxcpusb_args` (String) Set extra arguments for this UPS, e.g. "port=auto".
+- `bcmxcpusb_args` (Set of String) Set extra arguments for this UPS, e.g. "port=auto".
 - `bcmxcpusb_enable` (Boolean) Enable the PowerWare BCMXCPUSB driver.
-- `blazerser_args` (String) Set extra arguments for this UPS, e.g. "port=auto".
+- `blazerser_args` (Set of String) Set extra arguments for this UPS, e.g. "port=auto".
 - `blazerser_enable` (Boolean) Enable the BlazerSerial driver. Please be aware that this driver needs to run nut-tools as root.
-- `blazerusb_args` (String) Set extra arguments for this UPS, e.g. "port=auto".
+- `blazerusb_args` (Set of String) Set extra arguments for this UPS, e.g. "port=auto".
 - `blazerusb_enable` (Boolean) Enable the BlazerUSB driver.
 - `general_enable` (Boolean) Enable or disable the nut service. If enabled, the system will shutdown when the UPS emits a low battery warning.
-- `general_listen` (String) Set the addresses this service listen on.
+- `general_listen` (Set of String) Set the addresses this service listen on.
 - `general_mode` (String) Set the service mode. Currently only standalone and netclient are available. One of `standalone`, `netclient`.
 - `general_name` (String) Set a name for your UPS.
 - `netclient_address` (String) Set the IP address of the remote NUT server.
@@ -52,13 +52,13 @@ resource "opnsense_nut_settings" "this" {
 - `netclient_password` (String, Sensitive) Set the password of the remote NUT server.
 - `netclient_port` (Number) Set the TCP port of the remote NUT server. `-1` when unset; set `-1` to clear it.
 - `netclient_user` (String) Set the username of the remote NUT server.
-- `qx_args` (String) Set extra arguments for this UPS, e.g. "port=auto".
+- `qx_args` (Set of String) Set extra arguments for this UPS, e.g. "port=auto".
 - `qx_enable` (Boolean) Enable the QX driver.
-- `riello_args` (String) Set extra arguments for this UPS, e.g. "port=auto".
+- `riello_args` (Set of String) Set extra arguments for this UPS, e.g. "port=auto".
 - `riello_enable` (Boolean) Enable the Riello driver.
-- `snmp_args` (String) Set extra arguments for this UPS, e.g. "community=public".
+- `snmp_args` (Set of String) Set extra arguments for this UPS, e.g. "community=public".
 - `snmp_enable` (Boolean) Enable the SNMP driver.
-- `usbhid_args` (String) Set extra arguments for this UPS, e.g. "port=auto".
+- `usbhid_args` (Set of String) Set extra arguments for this UPS, e.g. "port=auto".
 - `usbhid_enable` (Boolean) Enable the USBHID driver.
 
 ### Read-Only

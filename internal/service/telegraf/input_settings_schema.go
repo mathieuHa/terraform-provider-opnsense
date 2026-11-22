@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -21,7 +22,7 @@ type inputSettingsResourceModel struct {
 	CollectCpuTime           types.Bool   `tfsdk:"collect_cpu_time"`
 	Disk                     types.Bool   `tfsdk:"disk"`
 	DiskMountPoints          types.String `tfsdk:"disk_mount_points"`
-	DiskIgnoreFs             types.String `tfsdk:"disk_ignore_fs"`
+	DiskIgnoreFs             types.Set    `tfsdk:"disk_ignore_fs"`
 	Diskio                   types.Bool   `tfsdk:"diskio"`
 	InternetSpeed            types.Bool   `tfsdk:"internet_speed"`
 	InternetSpeedSaving      types.Bool   `tfsdk:"internet_speed_saving"`
@@ -34,10 +35,10 @@ type inputSettingsResourceModel struct {
 	Pf                       types.Bool   `tfsdk:"pf"`
 	Ping                     types.Bool   `tfsdk:"ping"`
 	PingCount                types.Int64  `tfsdk:"ping_count"`
-	PingHosts                types.String `tfsdk:"ping_hosts"`
+	PingHosts                types.Set    `tfsdk:"ping_hosts"`
 	Ping6                    types.Bool   `tfsdk:"ping6"`
 	Ping6Count               types.Int64  `tfsdk:"ping6_count"`
-	Ping6Hosts               types.String `tfsdk:"ping6_hosts"`
+	Ping6Hosts               types.Set    `tfsdk:"ping6_hosts"`
 	Haproxy                  types.Bool   `tfsdk:"haproxy"`
 	Zfs                      types.Bool   `tfsdk:"zfs"`
 	Ntpq                     types.Bool   `tfsdk:"ntpq"`
@@ -88,11 +89,12 @@ func inputSettingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 		},
-		"disk_ignore_fs": schema.StringAttribute{
+		"disk_ignore_fs": schema.SetAttribute{
 			MarkdownDescription: "Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually present on /run, /var/run, /dev/shm or /dev).",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"diskio": schema.BoolAttribute{
 			MarkdownDescription: "Read metrics about disk IO by device.",
@@ -168,11 +170,12 @@ func inputSettingsAttributes() map[string]schema.Attribute {
 			Validators:          []validator.Int64{int64validator.AtLeast(-1)},
 			PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 		},
-		"ping_hosts": schema.StringAttribute{
+		"ping_hosts": schema.SetAttribute{
 			MarkdownDescription: "Set the hosts to ping using IPv4 in a CSV list.",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"ping6": schema.BoolAttribute{
 			MarkdownDescription: "Ping hosts using IPv6 and measure the metrics.",
@@ -187,11 +190,12 @@ func inputSettingsAttributes() map[string]schema.Attribute {
 			Validators:          []validator.Int64{int64validator.AtLeast(-1)},
 			PlanModifiers:       []planmodifier.Int64{int64planmodifier.UseStateForUnknown()},
 		},
-		"ping6_hosts": schema.StringAttribute{
+		"ping6_hosts": schema.SetAttribute{
 			MarkdownDescription: "Set the hosts to ping using IPv6 in a CSV list.",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"haproxy": schema.BoolAttribute{
 			MarkdownDescription: "Enable the collection of HAProxy statistics.",
@@ -257,7 +261,7 @@ func convertInputSettingsSchemaToStruct(d *inputSettingsResourceModel) *telegraf
 		CollectCpuTime:           settingsBool(d.CollectCpuTime),
 		Disk:                     settingsBool(d.Disk),
 		DiskMountPoints:          d.DiskMountPoints.ValueString(),
-		DiskIgnoreFs:             api.SelectedMap(d.DiskIgnoreFs.ValueString()),
+		DiskIgnoreFs:             api.SelectedMapList(settingsList(d.DiskIgnoreFs)),
 		Diskio:                   settingsBool(d.Diskio),
 		InternetSpeed:            settingsBool(d.InternetSpeed),
 		InternetSpeedSaving:      settingsBool(d.InternetSpeedSaving),
@@ -270,10 +274,10 @@ func convertInputSettingsSchemaToStruct(d *inputSettingsResourceModel) *telegraf
 		Pf:                       settingsBool(d.Pf),
 		Ping:                     settingsBool(d.Ping),
 		PingCount:                settingsInt(d.PingCount),
-		PingHosts:                api.SelectedMap(d.PingHosts.ValueString()),
+		PingHosts:                api.SelectedMapList(settingsList(d.PingHosts)),
 		Ping6:                    settingsBool(d.Ping6),
 		Ping6Count:               settingsInt(d.Ping6Count),
-		Ping6Hosts:               api.SelectedMap(d.Ping6Hosts.ValueString()),
+		Ping6Hosts:               api.SelectedMapList(settingsList(d.Ping6Hosts)),
 		Haproxy:                  settingsBool(d.Haproxy),
 		Zfs:                      settingsBool(d.Zfs),
 		Ntpq:                     settingsBool(d.Ntpq),
@@ -293,7 +297,7 @@ func convertInputSettingsStructToSchema(s *telegraf.InputSettings) *inputSetting
 		CollectCpuTime:           types.BoolValue(tools.StringToBool(s.CollectCpuTime)),
 		Disk:                     types.BoolValue(tools.StringToBool(s.Disk)),
 		DiskMountPoints:          types.StringValue(s.DiskMountPoints),
-		DiskIgnoreFs:             types.StringValue(s.DiskIgnoreFs.String()),
+		DiskIgnoreFs:             tools.StringSliceToSet(settingsNonEmpty(s.DiskIgnoreFs)),
 		Diskio:                   types.BoolValue(tools.StringToBool(s.Diskio)),
 		InternetSpeed:            types.BoolValue(tools.StringToBool(s.InternetSpeed)),
 		InternetSpeedSaving:      types.BoolValue(tools.StringToBool(s.InternetSpeedSaving)),
@@ -306,10 +310,10 @@ func convertInputSettingsStructToSchema(s *telegraf.InputSettings) *inputSetting
 		Pf:                       types.BoolValue(tools.StringToBool(s.Pf)),
 		Ping:                     types.BoolValue(tools.StringToBool(s.Ping)),
 		PingCount:                settingsReadInt(s.PingCount),
-		PingHosts:                types.StringValue(s.PingHosts.String()),
+		PingHosts:                tools.StringSliceToSet(settingsNonEmpty(s.PingHosts)),
 		Ping6:                    types.BoolValue(tools.StringToBool(s.Ping6)),
 		Ping6Count:               settingsReadInt(s.Ping6Count),
-		Ping6Hosts:               types.StringValue(s.Ping6Hosts.String()),
+		Ping6Hosts:               tools.StringSliceToSet(settingsNonEmpty(s.Ping6Hosts)),
 		Haproxy:                  types.BoolValue(tools.StringToBool(s.Haproxy)),
 		Zfs:                      types.BoolValue(tools.StringToBool(s.Zfs)),
 		Ntpq:                     types.BoolValue(tools.StringToBool(s.Ntpq)),

@@ -65,21 +65,26 @@ func TestAccTelegrafInputResource(t *testing.T) {
 			{
 				Config: `
 resource "opnsense_telegraf_input" "test" {
-  cpu  = true
-  disk = true
-  pf   = true
+  cpu        = true
+  disk       = true
+  pf         = true
+  ping       = true
+  ping_hosts = ["192.0.2.1", "192.0.2.2"]
 }
 `,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(a, "pf", "true"),
+					resource.TestCheckResourceAttr(a, "ping_hosts.#", "2"),
 				),
 			},
 			{
 				Config: `
 resource "opnsense_telegraf_input" "test" {
-  cpu  = true
-  disk = true
-  pf   = false
+  cpu        = true
+  disk       = true
+  pf         = false
+  ping       = false
+  ping_hosts = []
 }
 `,
 				Check: resource.ComposeAggregateTestCheckFunc(

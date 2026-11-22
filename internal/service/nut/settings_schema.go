@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,33 +19,33 @@ type settingsResourceModel struct {
 	GeneralEnable        types.Bool   `tfsdk:"general_enable"`
 	GeneralMode          types.String `tfsdk:"general_mode"`
 	GeneralName          types.String `tfsdk:"general_name"`
-	GeneralListen        types.String `tfsdk:"general_listen"`
+	GeneralListen        types.Set    `tfsdk:"general_listen"`
 	AccountAdminPassword types.String `tfsdk:"account_admin_password"`
 	AccountMonPassword   types.String `tfsdk:"account_mon_password"`
 	UsbhidEnable         types.Bool   `tfsdk:"usbhid_enable"`
-	UsbhidArgs           types.String `tfsdk:"usbhid_args"`
+	UsbhidArgs           types.Set    `tfsdk:"usbhid_args"`
 	ApcsmartEnable       types.Bool   `tfsdk:"apcsmart_enable"`
-	ApcsmartArgs         types.String `tfsdk:"apcsmart_args"`
+	ApcsmartArgs         types.Set    `tfsdk:"apcsmart_args"`
 	ApcupsdEnable        types.Bool   `tfsdk:"apcupsd_enable"`
 	ApcupsdHostname      types.String `tfsdk:"apcupsd_hostname"`
 	ApcupsdPort          types.Int64  `tfsdk:"apcupsd_port"`
 	BcmxcpusbEnable      types.Bool   `tfsdk:"bcmxcpusb_enable"`
-	BcmxcpusbArgs        types.String `tfsdk:"bcmxcpusb_args"`
+	BcmxcpusbArgs        types.Set    `tfsdk:"bcmxcpusb_args"`
 	BlazerusbEnable      types.Bool   `tfsdk:"blazerusb_enable"`
-	BlazerusbArgs        types.String `tfsdk:"blazerusb_args"`
+	BlazerusbArgs        types.Set    `tfsdk:"blazerusb_args"`
 	BlazerserEnable      types.Bool   `tfsdk:"blazerser_enable"`
-	BlazerserArgs        types.String `tfsdk:"blazerser_args"`
+	BlazerserArgs        types.Set    `tfsdk:"blazerser_args"`
 	NetclientEnable      types.Bool   `tfsdk:"netclient_enable"`
 	NetclientAddress     types.String `tfsdk:"netclient_address"`
 	NetclientPort        types.Int64  `tfsdk:"netclient_port"`
 	NetclientUser        types.String `tfsdk:"netclient_user"`
 	NetclientPassword    types.String `tfsdk:"netclient_password"`
 	QxEnable             types.Bool   `tfsdk:"qx_enable"`
-	QxArgs               types.String `tfsdk:"qx_args"`
+	QxArgs               types.Set    `tfsdk:"qx_args"`
 	RielloEnable         types.Bool   `tfsdk:"riello_enable"`
-	RielloArgs           types.String `tfsdk:"riello_args"`
+	RielloArgs           types.Set    `tfsdk:"riello_args"`
 	SnmpEnable           types.Bool   `tfsdk:"snmp_enable"`
-	SnmpArgs             types.String `tfsdk:"snmp_args"`
+	SnmpArgs             types.Set    `tfsdk:"snmp_args"`
 
 	Id types.String `tfsdk:"id"`
 }
@@ -69,11 +70,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
 		},
-		"general_listen": schema.StringAttribute{
+		"general_listen": schema.SetAttribute{
 			MarkdownDescription: "Set the addresses this service listen on.",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"account_admin_password": schema.StringAttribute{
 			MarkdownDescription: "Set the password for admin user \"admin\".",
@@ -95,11 +97,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 		},
-		"usbhid_args": schema.StringAttribute{
+		"usbhid_args": schema.SetAttribute{
 			MarkdownDescription: "Set extra arguments for this UPS, e.g. \"port=auto\".",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"apcsmart_enable": schema.BoolAttribute{
 			MarkdownDescription: "Enable the APCSMART driver.",
@@ -107,11 +110,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 		},
-		"apcsmart_args": schema.StringAttribute{
+		"apcsmart_args": schema.SetAttribute{
 			MarkdownDescription: "Set extra arguments for this UPS, e.g. \"port=auto\".",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"apcupsd_enable": schema.BoolAttribute{
 			MarkdownDescription: "Enable the APCUPSD controlled devices driver.",
@@ -138,11 +142,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 		},
-		"bcmxcpusb_args": schema.StringAttribute{
+		"bcmxcpusb_args": schema.SetAttribute{
 			MarkdownDescription: "Set extra arguments for this UPS, e.g. \"port=auto\".",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"blazerusb_enable": schema.BoolAttribute{
 			MarkdownDescription: "Enable the BlazerUSB driver.",
@@ -150,11 +155,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 		},
-		"blazerusb_args": schema.StringAttribute{
+		"blazerusb_args": schema.SetAttribute{
 			MarkdownDescription: "Set extra arguments for this UPS, e.g. \"port=auto\".",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"blazerser_enable": schema.BoolAttribute{
 			MarkdownDescription: "Enable the BlazerSerial driver. Please be aware that this driver needs to run nut-tools as root.",
@@ -162,11 +168,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 		},
-		"blazerser_args": schema.StringAttribute{
+		"blazerser_args": schema.SetAttribute{
 			MarkdownDescription: "Set extra arguments for this UPS, e.g. \"port=auto\".",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"netclient_enable": schema.BoolAttribute{
 			MarkdownDescription: "Enable the Netclient driver.",
@@ -206,11 +213,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 		},
-		"qx_args": schema.StringAttribute{
+		"qx_args": schema.SetAttribute{
 			MarkdownDescription: "Set extra arguments for this UPS, e.g. \"port=auto\".",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"riello_enable": schema.BoolAttribute{
 			MarkdownDescription: "Enable the Riello driver.",
@@ -218,11 +226,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 		},
-		"riello_args": schema.StringAttribute{
+		"riello_args": schema.SetAttribute{
 			MarkdownDescription: "Set extra arguments for this UPS, e.g. \"port=auto\".",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"snmp_enable": schema.BoolAttribute{
 			MarkdownDescription: "Enable the SNMP driver.",
@@ -230,11 +239,12 @@ func settingsAttributes() map[string]schema.Attribute {
 			Computed:            true,
 			PlanModifiers:       []planmodifier.Bool{boolplanmodifier.UseStateForUnknown()},
 		},
-		"snmp_args": schema.StringAttribute{
+		"snmp_args": schema.SetAttribute{
 			MarkdownDescription: "Set extra arguments for this UPS, e.g. \"community=public\".",
 			Optional:            true,
 			Computed:            true,
-			PlanModifiers:       []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+			ElementType:         types.StringType,
+			PlanModifiers:       []planmodifier.Set{setplanmodifier.UseStateForUnknown()},
 		},
 		"id": schema.StringAttribute{
 			Computed:            true,
@@ -289,7 +299,7 @@ func convertSettingsSchemaToStruct(d *settingsResourceModel) *nut.Settings {
 			GeneralEnable: settingsBool(d.GeneralEnable),
 			GeneralMode:   api.SelectedMap(d.GeneralMode.ValueString()),
 			GeneralName:   d.GeneralName.ValueString(),
-			GeneralListen: api.SelectedMap(d.GeneralListen.ValueString()),
+			GeneralListen: api.SelectedMapList(settingsList(d.GeneralListen)),
 		},
 		Account: nut.SettingsAccount{
 			AccountAdminPassword: d.AccountAdminPassword.ValueString(),
@@ -297,11 +307,11 @@ func convertSettingsSchemaToStruct(d *settingsResourceModel) *nut.Settings {
 		},
 		Usbhid: nut.SettingsUsbhid{
 			UsbhidEnable: settingsBool(d.UsbhidEnable),
-			UsbhidArgs:   api.SelectedMap(d.UsbhidArgs.ValueString()),
+			UsbhidArgs:   api.SelectedMapList(settingsList(d.UsbhidArgs)),
 		},
 		Apcsmart: nut.SettingsApcsmart{
 			ApcsmartEnable: settingsBool(d.ApcsmartEnable),
-			ApcsmartArgs:   api.SelectedMap(d.ApcsmartArgs.ValueString()),
+			ApcsmartArgs:   api.SelectedMapList(settingsList(d.ApcsmartArgs)),
 		},
 		Apcupsd: nut.SettingsApcupsd{
 			ApcupsdEnable:   settingsBool(d.ApcupsdEnable),
@@ -310,15 +320,15 @@ func convertSettingsSchemaToStruct(d *settingsResourceModel) *nut.Settings {
 		},
 		Bcmxcpusb: nut.SettingsBcmxcpusb{
 			BcmxcpusbEnable: settingsBool(d.BcmxcpusbEnable),
-			BcmxcpusbArgs:   api.SelectedMap(d.BcmxcpusbArgs.ValueString()),
+			BcmxcpusbArgs:   api.SelectedMapList(settingsList(d.BcmxcpusbArgs)),
 		},
 		Blazerusb: nut.SettingsBlazerusb{
 			BlazerusbEnable: settingsBool(d.BlazerusbEnable),
-			BlazerusbArgs:   api.SelectedMap(d.BlazerusbArgs.ValueString()),
+			BlazerusbArgs:   api.SelectedMapList(settingsList(d.BlazerusbArgs)),
 		},
 		Blazerser: nut.SettingsBlazerser{
 			BlazerserEnable: settingsBool(d.BlazerserEnable),
-			BlazerserArgs:   api.SelectedMap(d.BlazerserArgs.ValueString()),
+			BlazerserArgs:   api.SelectedMapList(settingsList(d.BlazerserArgs)),
 		},
 		Netclient: nut.SettingsNetclient{
 			NetclientEnable:   settingsBool(d.NetclientEnable),
@@ -329,15 +339,15 @@ func convertSettingsSchemaToStruct(d *settingsResourceModel) *nut.Settings {
 		},
 		Qx: nut.SettingsQx{
 			QxEnable: settingsBool(d.QxEnable),
-			QxArgs:   api.SelectedMap(d.QxArgs.ValueString()),
+			QxArgs:   api.SelectedMapList(settingsList(d.QxArgs)),
 		},
 		Riello: nut.SettingsRiello{
 			RielloEnable: settingsBool(d.RielloEnable),
-			RielloArgs:   api.SelectedMap(d.RielloArgs.ValueString()),
+			RielloArgs:   api.SelectedMapList(settingsList(d.RielloArgs)),
 		},
 		Snmp: nut.SettingsSnmp{
 			SnmpEnable: settingsBool(d.SnmpEnable),
-			SnmpArgs:   api.SelectedMap(d.SnmpArgs.ValueString()),
+			SnmpArgs:   api.SelectedMapList(settingsList(d.SnmpArgs)),
 		},
 	}
 }
@@ -347,32 +357,32 @@ func convertSettingsStructToSchema(s *nut.Settings) *settingsResourceModel {
 		GeneralEnable:        types.BoolValue(tools.StringToBool(s.General.GeneralEnable)),
 		GeneralMode:          types.StringValue(s.General.GeneralMode.String()),
 		GeneralName:          types.StringValue(s.General.GeneralName),
-		GeneralListen:        types.StringValue(s.General.GeneralListen.String()),
+		GeneralListen:        tools.StringSliceToSet(settingsNonEmpty(s.General.GeneralListen)),
 		AccountAdminPassword: types.StringValue(s.Account.AccountAdminPassword),
 		AccountMonPassword:   types.StringValue(s.Account.AccountMonPassword),
 		UsbhidEnable:         types.BoolValue(tools.StringToBool(s.Usbhid.UsbhidEnable)),
-		UsbhidArgs:           types.StringValue(s.Usbhid.UsbhidArgs.String()),
+		UsbhidArgs:           tools.StringSliceToSet(settingsNonEmpty(s.Usbhid.UsbhidArgs)),
 		ApcsmartEnable:       types.BoolValue(tools.StringToBool(s.Apcsmart.ApcsmartEnable)),
-		ApcsmartArgs:         types.StringValue(s.Apcsmart.ApcsmartArgs.String()),
+		ApcsmartArgs:         tools.StringSliceToSet(settingsNonEmpty(s.Apcsmart.ApcsmartArgs)),
 		ApcupsdEnable:        types.BoolValue(tools.StringToBool(s.Apcupsd.ApcupsdEnable)),
 		ApcupsdHostname:      types.StringValue(s.Apcupsd.ApcupsdHostname),
 		ApcupsdPort:          settingsReadInt(s.Apcupsd.ApcupsdPort),
 		BcmxcpusbEnable:      types.BoolValue(tools.StringToBool(s.Bcmxcpusb.BcmxcpusbEnable)),
-		BcmxcpusbArgs:        types.StringValue(s.Bcmxcpusb.BcmxcpusbArgs.String()),
+		BcmxcpusbArgs:        tools.StringSliceToSet(settingsNonEmpty(s.Bcmxcpusb.BcmxcpusbArgs)),
 		BlazerusbEnable:      types.BoolValue(tools.StringToBool(s.Blazerusb.BlazerusbEnable)),
-		BlazerusbArgs:        types.StringValue(s.Blazerusb.BlazerusbArgs.String()),
+		BlazerusbArgs:        tools.StringSliceToSet(settingsNonEmpty(s.Blazerusb.BlazerusbArgs)),
 		BlazerserEnable:      types.BoolValue(tools.StringToBool(s.Blazerser.BlazerserEnable)),
-		BlazerserArgs:        types.StringValue(s.Blazerser.BlazerserArgs.String()),
+		BlazerserArgs:        tools.StringSliceToSet(settingsNonEmpty(s.Blazerser.BlazerserArgs)),
 		NetclientEnable:      types.BoolValue(tools.StringToBool(s.Netclient.NetclientEnable)),
 		NetclientAddress:     types.StringValue(s.Netclient.NetclientAddress),
 		NetclientPort:        settingsReadInt(s.Netclient.NetclientPort),
 		NetclientUser:        types.StringValue(s.Netclient.NetclientUser),
 		NetclientPassword:    types.StringValue(s.Netclient.NetclientPassword),
 		QxEnable:             types.BoolValue(tools.StringToBool(s.Qx.QxEnable)),
-		QxArgs:               types.StringValue(s.Qx.QxArgs.String()),
+		QxArgs:               tools.StringSliceToSet(settingsNonEmpty(s.Qx.QxArgs)),
 		RielloEnable:         types.BoolValue(tools.StringToBool(s.Riello.RielloEnable)),
-		RielloArgs:           types.StringValue(s.Riello.RielloArgs.String()),
+		RielloArgs:           tools.StringSliceToSet(settingsNonEmpty(s.Riello.RielloArgs)),
 		SnmpEnable:           types.BoolValue(tools.StringToBool(s.Snmp.SnmpEnable)),
-		SnmpArgs:             types.StringValue(s.Snmp.SnmpArgs.String()),
+		SnmpArgs:             tools.StringSliceToSet(settingsNonEmpty(s.Snmp.SnmpArgs)),
 	}
 }

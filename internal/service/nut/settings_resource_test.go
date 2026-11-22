@@ -25,11 +25,13 @@ func TestAccNutSettingsResource(t *testing.T) {
 resource "opnsense_nut_settings" "test" {
   general_enable         = false
   general_name           = "tfacc"
+  general_listen         = ["127.0.0.1", "::1", "192.0.2.10"]
   account_admin_password = "tfacc-admin"
 }
 `,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr(a, "general_name", "tfacc"),
+					resource.TestCheckResourceAttr(a, "general_listen.#", "3"),
 					resource.TestCheckResourceAttr(a, "account_admin_password", "tfacc-admin"),
 				),
 			},
@@ -38,6 +40,7 @@ resource "opnsense_nut_settings" "test" {
 resource "opnsense_nut_settings" "test" {
   general_enable         = false
   general_name           = "UPSName"
+  general_listen         = ["127.0.0.1", "::1"]
   account_admin_password = "tfacc-admin-2"
 }
 `,

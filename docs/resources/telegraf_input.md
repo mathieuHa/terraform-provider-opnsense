@@ -36,7 +36,7 @@ resource "opnsense_telegraf_input" "this" {
 - `cpu_percpu` (Boolean) Whether to report Per-CPU stats or not.
 - `cpu_totalcpu` (Boolean) Whether to report total system CPU stats or not.
 - `disk` (Boolean) Read metrics about disk usage by mount point.
-- `disk_ignore_fs` (String) Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually present on /run, /var/run, /dev/shm or /dev).
+- `disk_ignore_fs` (Set of String) Ignore some mountpoints by filesystem type. For example (dev)tmpfs (usually present on /run, /var/run, /dev/shm or /dev).
 - `disk_mount_points` (String) By default, Telegraf gather stats for all mountpoints. Setting mountpoints will restrict the stats to the specified mountpoints.
 - `diskio` (Boolean) Read metrics about disk IO by device.
 - `haproxy` (Boolean) Enable the collection of HAProxy statistics.
@@ -52,9 +52,9 @@ resource "opnsense_telegraf_input" "this" {
 - `ping` (Boolean) Ping hosts using IPv4 and measure the metrics.
 - `ping6` (Boolean) Ping hosts using IPv6 and measure the metrics.
 - `ping6_count` (Number) Number of ping packets to send per interval. Corresponds to the "-c" option of the ping command. `-1` when unset; set `-1` to clear it.
-- `ping6_hosts` (String) Set the hosts to ping using IPv6 in a CSV list.
+- `ping6_hosts` (Set of String) Set the hosts to ping using IPv6 in a CSV list.
 - `ping_count` (Number) Number of ping packets to send per interval. Corresponds to the "-c" option of the ping command. `-1` when unset; set `-1` to clear it.
-- `ping_hosts` (String) Set the hosts to ping using IPv4 in a CSV list.
+- `ping_hosts` (Set of String) Set the hosts to ping using IPv4 in a CSV list.
 - `processes` (Boolean) Get the number of processes and group them by status.
 - `swap` (Boolean) Read metrics about swap memory usage.
 - `system` (Boolean) Read metrics about system load and uptime.
