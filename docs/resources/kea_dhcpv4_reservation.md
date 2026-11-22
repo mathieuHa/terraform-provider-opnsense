@@ -40,6 +40,7 @@ resource "opnsense_kea_dhcpv4_subnet" "lan" {
 
 - `description` (String) Optional description here for your reference (not parsed).
 - `hostname` (String) Hostname to offer to the client. Defaults to `""`.
+- `options` (Set of String) UUIDs of `opnsense_kea_dhcpv4_option` resources sent to the clients. Defaults to `[]`.
 
 ### Read-Only
 

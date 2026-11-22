@@ -22,6 +22,8 @@ type dhcpv6ReservationResourceModel struct {
 	Hostname     types.String `tfsdk:"hostname"`
 	DomainSearch types.Set    `tfsdk:"domain_search"`
 
+	Options types.Set `tfsdk:"options"`
+
 	Description types.String `tfsdk:"description"`
 
 	Id types.String `tfsdk:"id"`
@@ -52,6 +54,13 @@ func dhcpv6ReservationResourceSchema() schema.Schema {
 			},
 			"domain_search": schema.SetAttribute{
 				MarkdownDescription: "Domain search list. Defaults to `[]`.",
+				Optional:            true,
+				Computed:            true,
+				ElementType:         types.StringType,
+				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
+			},
+			"options": schema.SetAttribute{
+				MarkdownDescription: "UUIDs of `opnsense_kea_dhcpv6_option` resources sent to the clients. Defaults to `[]`.",
 				Optional:            true,
 				Computed:            true,
 				ElementType:         types.StringType,
@@ -104,6 +113,7 @@ func dhcpv6ReservationDataSourceSchema() dschema.Schema {
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
+			"options": dschema.SetAttribute{MarkdownDescription: "UUIDs of the custom options sent to the clients.", Computed: true, ElementType: types.StringType},
 			"description": dschema.StringAttribute{
 				MarkdownDescription: "Optional description.",
 				Computed:            true,
@@ -119,6 +129,7 @@ func convertDhcpv6ReservationSchemaToStruct(d *dhcpv6ReservationResourceModel) (
 		DUID:         d.DUID.ValueString(),
 		Hostname:     d.Hostname.ValueString(),
 		DomainSearch: tools.SetToStringSlice(d.DomainSearch),
+		Options:      optionsList(d.Options),
 		Description:  d.Description.ValueString(),
 	}, nil
 }
@@ -130,6 +141,7 @@ func convertDhcpv6ReservationStructToSchema(d *kea.ReservationV6) (*dhcpv6Reserv
 		DUID:         types.StringValue(d.DUID),
 		Hostname:     types.StringValue(d.Hostname),
 		DomainSearch: tools.StringSliceToSet(d.DomainSearch),
+		Options:      tools.StringSliceToSet(d.Options),
 		Description:  types.StringValue(d.Description),
 	}, nil
 }

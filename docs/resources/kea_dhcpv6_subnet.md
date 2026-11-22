@@ -60,6 +60,7 @@ resource "opnsense_kea_dhcpv6_subnet" "example" {
 - `dns_servers` (Set of String) DNS servers to offer. Defaults to `[]`.
 - `domain_search` (Set of String) Domain search list. Defaults to `[]`.
 - `interface` (String) Interface to listen on. Defaults to `""`.
+- `options` (Set of String) UUIDs of `opnsense_kea_dhcpv6_option` resources sent to the clients. Defaults to `[]`.
 - `pd_allocator` (String) Prefix delegation allocator. Defaults to `""`.
 - `pools` (Set of String) Set of address pools (e.g. `"2001:db8::100 - 2001:db8::200"`). Defaults to `[]`.
 

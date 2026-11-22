@@ -12,6 +12,7 @@ func Resources(ctx context.Context) []func() resource.Resource {
 		newAlertResource,
 		newServiceResource,
 		newTestResource,
+		newSettingsResource,
 	}
 }
 

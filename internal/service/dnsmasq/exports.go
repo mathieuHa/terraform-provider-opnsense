@@ -15,6 +15,7 @@ func Resources(ctx context.Context) []func() resource.Resource {
 		newOptionResource,
 		newRangeResource,
 		newTagResource,
+		newSettingsResource,
 	}
 }
 

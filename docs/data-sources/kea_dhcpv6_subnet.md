@@ -31,6 +31,7 @@ data "opnsense_kea_dhcpv6_subnet" "example" {
 - `dns_servers` (Set of String) DNS servers offered.
 - `domain_search` (Set of String) Domain search list.
 - `interface` (String) Interface to listen on.
+- `options` (Set of String) UUIDs of the custom options sent to the clients.
 - `pd_allocator` (String) Prefix delegation allocator in use.
 - `pools` (Set of String) Set of address pools.
 - `subnet` (String) IPv6 Subnet.

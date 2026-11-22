@@ -3,9 +3,11 @@ package kea
 import (
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/opnsense-go/pkg/kea"
+	"github.com/browningluke/terraform-provider-opnsense/internal/tools"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -18,6 +20,8 @@ type dhcpv4ReservationResourceModel struct {
 	IpAddress  types.String `tfsdk:"ip_address"`
 	MacAddress types.String `tfsdk:"mac_address"`
 	Hostname   types.String `tfsdk:"hostname"`
+
+	Options types.Set `tfsdk:"options"`
 
 	Description types.String `tfsdk:"description"`
 
@@ -46,6 +50,13 @@ func dhcpv4ReservationResourceSchema() schema.Schema {
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
+			},
+			"options": schema.SetAttribute{
+				MarkdownDescription: "UUIDs of `opnsense_kea_dhcpv4_option` resources sent to the clients. Defaults to `[]`.",
+				Optional:            true,
+				Computed:            true,
+				ElementType:         types.StringType,
+				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "Optional description here for your reference (not parsed).",
@@ -89,6 +100,7 @@ func dhcpv4ReservationDataSourceSchema() dschema.Schema {
 				MarkdownDescription: "Hostname to offer to the client.",
 				Computed:            true,
 			},
+			"options": dschema.SetAttribute{MarkdownDescription: "UUIDs of the custom options sent to the clients.", Computed: true, ElementType: types.StringType},
 			"description": dschema.StringAttribute{
 				MarkdownDescription: "Optional description here for your reference (not parsed).",
 				Computed:            true,
@@ -103,6 +115,7 @@ func convertDhcpv4ReservationSchemaToStruct(d *dhcpv4ReservationResourceModel) (
 		IpAddress:   d.IpAddress.ValueString(),
 		HwAddress:   d.MacAddress.ValueString(),
 		Hostname:    d.Hostname.ValueString(),
+		Options:     optionsList(d.Options),
 		Description: d.Description.ValueString(),
 	}, nil
 }
@@ -113,6 +126,7 @@ func convertDhcpv4ReservationStructToSchema(d *kea.ReservationV4) (*dhcpv4Reserv
 		IpAddress:   types.StringValue(d.IpAddress),
 		MacAddress:  types.StringValue(d.HwAddress),
 		Hostname:    types.StringValue(d.Hostname),
+		Options:     tools.StringSliceToSet(d.Options),
 		Description: types.StringValue(d.Description),
 	}, nil
 }

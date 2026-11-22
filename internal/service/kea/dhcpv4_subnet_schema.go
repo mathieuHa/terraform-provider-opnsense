@@ -59,6 +59,8 @@ type dhcpv4SubnetResourceModel struct {
 	DdnsUpdateOnRenew          types.Bool   `tfsdk:"ddns_update_on_renew"`
 	DdnsConflictResolutionMode types.String `tfsdk:"ddns_conflict_resolution_mode"`
 
+	Options types.Set `tfsdk:"options"`
+
 	Description types.String `tfsdk:"description"`
 
 	Id types.String `tfsdk:"id"`
@@ -174,6 +176,13 @@ func dhcpv4SubnetResourceSchema() schema.Schema {
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
+			},
+			"options": schema.SetAttribute{
+				MarkdownDescription: "UUIDs of `opnsense_kea_dhcpv4_option` resources sent to the clients. Defaults to `[]`.",
+				Optional:            true,
+				Computed:            true,
+				ElementType:         types.StringType,
+				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "Optional description here for your reference (not parsed).",
@@ -363,6 +372,7 @@ func dhcpv4SubnetDataSourceSchema() dschema.Schema {
 				MarkdownDescription: "Boot filename to request.",
 				Computed:            true,
 			},
+			"options": dschema.SetAttribute{MarkdownDescription: "UUIDs of the custom options sent to the clients.", Computed: true, ElementType: types.StringType},
 			"description": dschema.StringAttribute{
 				MarkdownDescription: "Optional description here for your reference (not parsed).",
 				Computed:            true,
@@ -426,6 +436,7 @@ func convertDhcpv4SubnetSchemaToStruct(d *dhcpv4SubnetResourceModel) (*kea.Subne
 		DdnsOverrideClientUpdate:   tools.BoolToString(d.DdnsOverrideClientUpdate.ValueBool()),
 		DdnsUpdateOnRenew:          tools.BoolToString(d.DdnsUpdateOnRenew.ValueBool()),
 		DdnsConflictResolutionMode: api.SelectedMap(d.DdnsConflictResolutionMode.ValueString()),
+		Options:                    optionsList(d.Options),
 		Description:                d.Description.ValueString(),
 	}, nil
 }
@@ -445,6 +456,7 @@ func convertDhcpv4SubnetStructToSchema(d *kea.SubnetV4) (*dhcpv4SubnetResourceMo
 		NextServer:        types.StringValue(d.NextServer),
 		TFTPServer:        types.StringValue(d.OptionData.TftpServerName),
 		TFTPBootfile:      types.StringValue(d.OptionData.BootFileName),
+		Options:           tools.StringSliceToSet(d.Options),
 		Description:       types.StringValue(d.Description),
 
 		ValidLifetime:              types.Int64Value(tools.StringToInt64(d.ValidLifetime)),

@@ -26,6 +26,8 @@ type dhcpv6SubnetResourceModel struct {
 	DnsServers   types.Set `tfsdk:"dns_servers"`
 	DomainSearch types.Set `tfsdk:"domain_search"`
 
+	Options types.Set `tfsdk:"options"`
+
 	Description types.String `tfsdk:"description"`
 
 	Id types.String `tfsdk:"id"`
@@ -74,6 +76,13 @@ func dhcpv6SubnetResourceSchema() schema.Schema {
 			},
 			"domain_search": schema.SetAttribute{
 				MarkdownDescription: "Domain search list. Defaults to `[]`.",
+				Optional:            true,
+				Computed:            true,
+				ElementType:         types.StringType,
+				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
+			},
+			"options": schema.SetAttribute{
+				MarkdownDescription: "UUIDs of `opnsense_kea_dhcpv6_option` resources sent to the clients. Defaults to `[]`.",
 				Optional:            true,
 				Computed:            true,
 				ElementType:         types.StringType,
@@ -136,6 +145,7 @@ func dhcpv6SubnetDataSourceSchema() dschema.Schema {
 				Computed:            true,
 				ElementType:         types.StringType,
 			},
+			"options": dschema.SetAttribute{MarkdownDescription: "UUIDs of the custom options sent to the clients.", Computed: true, ElementType: types.StringType},
 			"description": dschema.StringAttribute{
 				MarkdownDescription: "Optional description.",
 				Computed:            true,
@@ -155,6 +165,7 @@ func convertDhcpv6SubnetSchemaToStruct(d *dhcpv6SubnetResourceModel) (*kea.Subne
 			DomainNameServers: tools.SetToStringSlice(d.DnsServers),
 			DomainSearch:      tools.SetToStringSlice(d.DomainSearch),
 		},
+		Options:     optionsList(d.Options),
 		Description: d.Description.ValueString(),
 	}, nil
 }
@@ -168,6 +179,7 @@ func convertDhcpv6SubnetStructToSchema(d *kea.SubnetV6) (*dhcpv6SubnetResourceMo
 		Interface:    types.StringValue(d.Interface.String()),
 		DnsServers:   tools.StringSliceToSet(d.OptionData.DomainNameServers),
 		DomainSearch: tools.StringSliceToSet(d.OptionData.DomainSearch),
+		Options:      tools.StringSliceToSet(d.Options),
 		Description:  types.StringValue(d.Description),
 	}, nil
 }
