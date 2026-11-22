@@ -104,6 +104,7 @@ func (r *userResource) Create(ctx context.Context, req resource.CreateRequest, r
 	}
 	readModel.Id = data.Id
 	readModel.Password = data.Password
+	readModel.ScrambledPassword = data.ScrambledPassword
 	data = readModel
 
 	tflog.Trace(ctx, "created a resource")
@@ -143,6 +144,10 @@ func (r *userResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 	userModel.Id = data.Id
 	userModel.Password = data.Password
+	userModel.ScrambledPassword = data.ScrambledPassword
+	if userModel.ScrambledPassword.IsNull() {
+		userModel.ScrambledPassword = types.BoolValue(false)
+	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &userModel)...)
 }
