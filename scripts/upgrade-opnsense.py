@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""Upgrade the QEMU-booted OPNsense VM to the latest 26.1.x patch level.
-
-The bsd.ac qemu image ships OPNsense 26.1 base. Several DNAT bugs were fixed
-in 26.1.1-26.1.3 (see community changelog), causing /api/firewall/d_nat/addRule
-to return 500 on the base image. Run opnsense-update to apply the patches
-before tests.
-"""
+"""Upgrade the QEMU-booted OPNsense VM to the latest patch release of its series."""
 
 import base64
 import json
