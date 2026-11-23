@@ -63,8 +63,8 @@ jobs:
               "firewall": ["firewall"],
               "unbound": ["unbound"],
               "ipsec": ["ipsec"],
-              "other": ["acmeclient", "auth", "caddy", "captiveportal", "chrony", "core", "crowdsec", "cron", "diagnostics", "dnsmasq", "interfaces", "kea", "monit",
-                        "dhcrelay", "haproxy", "hasync", "hostdiscovery", "ids", "nginx", "nodeexporter", "nut", "openvpn", "proxy", "quagga", "radvd", "routes", "routing", "syslog", "tailscale", "telegraf", "trafficshaper", "trust", "wireguard", "zerotier"],
+              "other": ["acmeclient", "auth", "bind", "caddy", "captiveportal", "chrony", "core", "crowdsec", "cron", "diagnostics", "dnsmasq", "interfaces", "kea", "monit",
+                        "dhcrelay", "dyndns", "haproxy", "hasync", "hostdiscovery", "ids", "nginx", "nodeexporter", "nut", "openvpn", "proxy", "quagga", "radvd", "routes", "routing", "syslog", "tailscale", "telegraf", "trafficshaper", "trust", "wireguard", "zerotier"],
           }
           # Non-service packages, tested with "other" on full-suite runs.
           EXTRA_OTHER = ["./internal/provider/...", "./internal/tools/...",

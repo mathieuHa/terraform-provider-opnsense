@@ -41,6 +41,8 @@ SERVICES = {
     "unbound": ("Unbound DNS", "core", None),
     "wireguard": ("WireGuard", "core", None),
     "acmeclient": ("ACME client", "plugin", "os-acme-client"),
+    "bind": ("BIND DNS", "plugin", "os-bind"),
+    "dyndns": ("Dynamic DNS", "plugin", "os-ddclient"),
     "caddy": ("Caddy", "plugin", "os-caddy"),
     "chrony": ("Chrony", "plugin", "os-chrony"),
     "crowdsec": ("CrowdSec", "plugin", "os-crowdsec"),
