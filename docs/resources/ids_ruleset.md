@@ -14,7 +14,7 @@ Enables one of the installable Suricata rulesets (**Services ▸ Intrusion Detec
 
 ```terraform
 resource "opnsense_ids_ruleset" "sslbl" {
-  filename = "abuse.ch.sslipblacklist.rules"
+  filename = "emerging-scan.rules"
 }
 ```
 
@@ -23,7 +23,7 @@ resource "opnsense_ids_ruleset" "sslbl" {
 
 ### Required
 
-- `filename` (String) Ruleset file name, e.g. `abuse.ch.sslipblacklist.rules` or `emerging-scan.rules`.
+- `filename` (String) Ruleset file name, e.g. `emerging-scan.rules` or `abuse.ch.urlhaus.rules`.
 
 ### Read-Only
 

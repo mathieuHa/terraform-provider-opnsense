@@ -42,7 +42,7 @@ func (r *rulesetResource) Schema(ctx context.Context, req resource.SchemaRequest
 		MarkdownDescription: "Enables one of the installable Suricata rulesets (**Services ▸ Intrusion Detection ▸ Administration ▸ Download**). Destroying the resource disables the ruleset. Rules are downloaded by the daily IDS update job or the **Download & Update Rules** button, then loaded when the IDS is reconfigured.",
 		Attributes: map[string]schema.Attribute{
 			"filename": schema.StringAttribute{
-				MarkdownDescription: "Ruleset file name, e.g. `abuse.ch.sslipblacklist.rules` or `emerging-scan.rules`.",
+				MarkdownDescription: "Ruleset file name, e.g. `emerging-scan.rules` or `abuse.ch.urlhaus.rules`.",
 				Required:            true,
 				PlanModifiers:       []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},

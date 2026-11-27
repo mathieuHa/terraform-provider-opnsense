@@ -12,7 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
-const testRuleset = "abuse.ch.sslipblacklist.rules"
+const testRuleset = "emerging-scan.rules"
 
 func TestAccIdsRulesetResource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
@@ -34,7 +34,7 @@ resource "opnsense_ids_policy" "test" {
 `, testRuleset),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("opnsense_ids_ruleset.test", "id", testRuleset),
-					resource.TestCheckResourceAttr("opnsense_ids_ruleset.test", "description", "abuse.ch/SSL IP Blacklist"),
+					resource.TestCheckResourceAttr("opnsense_ids_ruleset.test", "description", "ET open/emerging-scan"),
 					resource.TestMatchResourceAttr("opnsense_ids_ruleset.test", "uuid", acctest.UUIDRegexp()),
 					resource.TestCheckResourceAttrPair("opnsense_ids_policy.test", "rulesets.0", "opnsense_ids_ruleset.test", "uuid"),
 				),
