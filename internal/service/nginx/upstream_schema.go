@@ -113,7 +113,7 @@ func upstreamResourceSchema() schema.Schema {
 				Default:             booldefault.StaticBool(false),
 			},
 			"tls_client_certificate": schema.StringAttribute{
-				MarkdownDescription: "Authenticate on the Server using a client certificate. Defaults to ``.",
+				MarkdownDescription: "Authenticate on the Server using a client certificate. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to ``.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
@@ -139,7 +139,7 @@ func upstreamResourceSchema() schema.Schema {
 				Default:             booldefault.StaticBool(true),
 			},
 			"tls_trusted_certificate": schema.SetAttribute{
-				MarkdownDescription: "TLS: Trusted Certificate. Defaults to `[]`.",
+				MarkdownDescription: "TLS: Trusted Certificate. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to `[]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,

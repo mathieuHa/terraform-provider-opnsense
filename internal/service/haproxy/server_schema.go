@@ -170,7 +170,7 @@ func serverResourceSchema() schema.Schema {
 				Default:             booldefault.StaticBool(true),
 			},
 			"ssl_ca": schema.SetAttribute{
-				MarkdownDescription: "The selected CAs will be used to verify the server certificate. When nothing is selected, the system-wide CA certificate bundle will be used. To import additional CAs, go to Authority Manager. Defaults to `[]`.",
+				MarkdownDescription: "The selected CAs will be used to verify the server certificate. When nothing is selected, the system-wide CA certificate bundle will be used. To import additional CAs, go to Authority Manager. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to `[]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,

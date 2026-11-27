@@ -63,7 +63,7 @@ func userResourceSchema() schema.Schema {
 				Sensitive:           true,
 			},
 			"scrambled_password": schema.BoolAttribute{
-				MarkdownDescription: "When enabled, OPNsense sets a random password, for accounts that only use API keys or SSH keys. Defaults to `false`.",
+				MarkdownDescription: "When enabled, OPNsense sets a random password, for accounts that only use API keys or SSH keys. The password is scrambled when the user is created with it, or when it changes from `false` to `true`; an imported user is recorded as `true`, so importing never scrambles an existing password. Defaults to `false`.",
 				Optional:            true,
 				Computed:            true,
 				Default:             booldefault.StaticBool(false),

@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -28,8 +29,9 @@ func proxyCacheValidResourceSchema() schema.Schema {
 
 		Attributes: map[string]schema.Attribute{
 			"description": schema.StringAttribute{
-				MarkdownDescription: "Brief description for reference.",
+				MarkdownDescription: "Brief description for reference. No spaces, tabs or double quotes.",
 				Required:            true,
+				Validators:          []validator.String{noSpaces},
 			},
 			"code": schema.SetAttribute{
 				MarkdownDescription: "Enter a Respone codes or use \"any\" to cache any responses. Defaults to `[\"any\"]`.",

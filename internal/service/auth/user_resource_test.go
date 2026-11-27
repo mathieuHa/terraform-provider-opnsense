@@ -3,6 +3,8 @@ package auth_test
 import (
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
+
 	"github.com/browningluke/terraform-provider-opnsense/internal/acctest"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
@@ -26,7 +28,7 @@ func TestAccAuthUserResource(t *testing.T) {
 				ResourceName:            "opnsense_auth_user.test",
 				ImportState:             true,
 				ImportStateVerify:       true,
-				ImportStateVerifyIgnore: []string{"password"},
+				ImportStateVerifyIgnore: []string{"password", "scrambled_password"},
 			},
 			{
 				Config: "resource \"opnsense_auth_group\" \"g\" {\n  name = \"tftestusergrp\"\n}\n\nresource \"opnsense_auth_user\" \"test\" {\n  name = \"tftestuser\"\n  password = \"Tf-Test-Passw0rd-2!\"\n  full_name = \"TF Test 2\"\n  shell = \"/bin/sh\"\n  privileges = [\"page-diagnostics-ping\"]\n  group_memberships = []\n}\n",
@@ -46,6 +48,30 @@ func TestAccAuthUserResource(t *testing.T) {
 					resource.TestCheckResourceAttrPair("data.opnsense_auth_user.test", "full_name", "opnsense_auth_user.test", "full_name"),
 					resource.TestCheckResourceAttrPair("data.opnsense_auth_user.test", "shell", "opnsense_auth_user.test", "shell"),
 				),
+			},
+		},
+	})
+}
+
+func TestAccAuthUserImportKeepsPassword(t *testing.T) {
+	user := func(scrambled string) string {
+		return "resource \"opnsense_auth_user\" \"test\" {\n  name = \"tftestimport\"\n  password = \"Tf-Test-Passw0rd!\"\n" + scrambled + "}\n"
+	}
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: user(""),
+			},
+			{
+				ResourceName:    "opnsense_auth_user.test",
+				Config:          "resource \"opnsense_auth_user\" \"test\" {\n  name = \"tftestimport\"\n  scrambled_password = true\n}\n",
+				ImportState:     true,
+				ImportStateKind: resource.ImportBlockWithID,
+				ImportPlanChecks: resource.ImportPlanChecks{
+					PreApply: []plancheck.PlanCheck{plancheck.ExpectResourceAction("opnsense_auth_user.test", plancheck.ResourceActionNoop)},
+				},
 			},
 		},
 	})

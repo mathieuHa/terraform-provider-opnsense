@@ -61,6 +61,7 @@ func vlanResourceSchema() schema.Schema {
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
 				PlanModifiers: []planmodifier.String{
+					keepGeneratedDevice{},
 					stringplanmodifier.RequiresReplace(),
 				},
 			},

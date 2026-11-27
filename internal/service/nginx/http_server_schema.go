@@ -166,13 +166,13 @@ func httpServerResourceSchema() schema.Schema {
 				Default:             stringdefault.StaticString(""),
 			},
 			"certificate": schema.StringAttribute{
-				MarkdownDescription: "TLS Certificate. Defaults to ``.",
+				MarkdownDescription: "TLS Certificate. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to ``.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
 			},
 			"ca": schema.SetAttribute{
-				MarkdownDescription: "Trusted CA certificates. Defaults to `[]`.",
+				MarkdownDescription: "Trusted CA certificates. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to `[]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,

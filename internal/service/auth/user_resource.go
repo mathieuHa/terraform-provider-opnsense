@@ -154,8 +154,10 @@ func (r *userResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 
 func (r *userResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *userResourceModel
+	var state *userResourceModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -166,6 +168,9 @@ func (r *userResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		resp.Diagnostics.AddError("Client Error",
 			fmt.Sprintf("Unable to parse user, got error: %s", err))
 		return
+	}
+	if state.ScrambledPassword.ValueBool() {
+		obj.ScrambledPassword = "0"
 	}
 
 	err = r.client.Auth().UpdateUser(ctx, data.Id.ValueString(), obj)
@@ -198,4 +203,5 @@ func (r *userResource) Delete(ctx context.Context, req resource.DeleteRequest, r
 
 func (r *userResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("scrambled_password"), true)...)
 }

@@ -3,12 +3,15 @@ package kea
 import (
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/opnsense-go/pkg/kea"
+	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"regexp"
 )
 
 // dhcpv6PdPoolResourceModel describes the resource data model.
@@ -32,8 +35,11 @@ func dhcpv6PdPoolResourceSchema() schema.Schema {
 				Required:            true,
 			},
 			"prefix": schema.StringAttribute{
-				MarkdownDescription: "IPv6 prefix for the PD pool (e.g. `\"2001:db8::/48\"`).",
+				MarkdownDescription: "IPv6 prefix address for the PD pool, without its length (e.g. `\"2001:db8:100::\"`); the length goes in `prefix_len`.",
 				Required:            true,
+				Validators: []validator.String{
+					stringvalidator.RegexMatches(regexp.MustCompile(`^[^/]*$`), "must be the prefix address without its length; set the length in prefix_len"),
+				},
 			},
 			"prefix_len": schema.StringAttribute{
 				MarkdownDescription: "Prefix length of the PD pool prefix.",

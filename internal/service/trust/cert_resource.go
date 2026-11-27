@@ -158,6 +158,8 @@ func (r *certResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
+	keepCertMaterial(cert)
+
 	err = r.client.Trust().UpdateCert(ctx, data.Id.ValueString(), cert)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error",
@@ -212,6 +214,8 @@ func (r *certResource) ImportState(ctx context.Context, req resource.ImportState
 func preserveCertStateFields(model *certResourceModel, state *certResourceModel) {
 	if !state.Action.IsNull() && !state.Action.IsUnknown() {
 		model.Action = state.Action
+	} else {
+		model.Action = types.StringValue("internal")
 	}
 	// Preserve key material and validity timestamps from prior state once set.
 	// OPNsense may return slightly different timestamps between reads.

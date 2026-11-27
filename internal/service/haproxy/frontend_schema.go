@@ -145,14 +145,14 @@ func frontendResourceSchema() schema.Schema {
 				Default:             booldefault.StaticBool(false),
 			},
 			"ssl_certificates": schema.SetAttribute{
-				MarkdownDescription: "Select certificates to use for SSL offloading. HAProxy's SNI recognition will determine the correct certificate automatically. If no SNI is provided by the client then the first certificate will be presented.To import additional certificates, go to Certificate Manager. Defaults to `[]`.",
+				MarkdownDescription: "Select certificates to use for SSL offloading. HAProxy's SNI recognition will determine the correct certificate automatically. If no SNI is provided by the client then the first certificate will be presented.To import additional certificates, go to Certificate Manager. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to `[]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,
 				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
 			},
 			"ssl_default_certificate": schema.StringAttribute{
-				MarkdownDescription: "This certificate will be presented if no SNI is provided by the client or if the client provides an SNI hostname which does not match any certificate. This parameter is optional to enforce a certain sort order for certificates. Defaults to ``.",
+				MarkdownDescription: "This certificate will be presented if no SNI is provided by the client or if the client provides an SNI hostname which does not match any certificate. This parameter is optional to enforce a certain sort order for certificates. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to ``.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
@@ -241,14 +241,14 @@ func frontendResourceSchema() schema.Schema {
 				Validators:          []validator.String{stringvalidator.OneOf("", "none", "optional", "required")},
 			},
 			"ssl_client_auth_cas": schema.SetAttribute{
-				MarkdownDescription: "Select CA certificates to use for client certificate authentication. To import additional CAs, go to CA Manager. Defaults to `[]`.",
+				MarkdownDescription: "Select CA certificates to use for client certificate authentication. To import additional CAs, go to CA Manager. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to `[]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,
 				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
 			},
 			"ssl_client_auth_crls": schema.SetAttribute{
-				MarkdownDescription: "Select CRLs to use for client certificate authentication. To import additional CRLs, go to CRL Manager. Defaults to `[]`.",
+				MarkdownDescription: "Select CRLs to use for client certificate authentication. To import additional CRLs, go to CRL Manager. Takes the `ref_id` of an `opnsense_trust_crl`, not its UUID. Defaults to `[]`.",
 				ElementType:         types.StringType,
 				Optional:            true,
 				Computed:            true,

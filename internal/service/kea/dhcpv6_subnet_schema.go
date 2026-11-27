@@ -62,10 +62,8 @@ func dhcpv6SubnetResourceSchema() schema.Schema {
 				Default:             setdefault.StaticValue(tools.EmptySetValue(types.StringType)),
 			},
 			"interface": schema.StringAttribute{
-				MarkdownDescription: "Interface to listen on. Defaults to `\"\"`.",
-				Optional:            true,
-				Computed:            true,
-				Default:             stringdefault.StaticString(""),
+				MarkdownDescription: "Interface to listen on, e.g. `lan`. It must be one of the interfaces selected in the Kea DHCPv6 settings.",
+				Required:            true,
 			},
 			"dns_servers": schema.SetAttribute{
 				MarkdownDescription: "DNS servers to offer. Defaults to `[]`.",

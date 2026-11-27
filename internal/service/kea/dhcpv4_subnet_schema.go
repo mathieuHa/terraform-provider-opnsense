@@ -415,7 +415,7 @@ func convertDhcpv4SubnetSchemaToStruct(d *dhcpv4SubnetResourceModel) (*kea.Subne
 			DomainNameServers: tools.SetToStringSlice(d.DomainNameServers),
 			DomainSearch:      tools.SetToStringSlice(d.DomainSearch),
 			Routers:           tools.SetToStringSlice(d.Routers),
-			StaticRoutes:      strings.Join(routePieceList, ";"),
+			StaticRoutes:      joinStaticRoutes(routePieceList),
 			DomainName:        d.DomainName.ValueString(),
 			NtpServers:        tools.SetToStringSlice(d.NTPServers),
 			TimeServers:       tools.SetToStringSlice(d.TimeServers),
@@ -482,21 +482,9 @@ func convertDhcpv4SubnetStructToSchema(d *kea.SubnetV4) (*dhcpv4SubnetResourceMo
 		[]attr.Value{},
 	)
 
-	routeSlice := strings.Split(d.OptionData.StaticRoutes, ";")
-	routes := []staticRouteModel{}
+	routes := parseStaticRoutes(d.OptionData.StaticRoutes)
 
-	if len(routeSlice) > 0 {
-		for _, i := range routeSlice {
-			routePiece := strings.Split(i, ",")
-			if len(routePiece) != 2 {
-				continue
-			}
-			routes = append(routes, staticRouteModel{
-				DestinationIp: types.StringValue(routePiece[0]),
-				RouterIp:      types.StringValue(routePiece[1]),
-			})
-		}
-
+	if len(routes) > 0 {
 		v, _ = types.SetValueFrom(
 			context.Background(),
 			types.ObjectType{

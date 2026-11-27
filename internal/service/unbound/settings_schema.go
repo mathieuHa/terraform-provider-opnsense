@@ -282,10 +282,10 @@ func settingsResourceSchema() schema.Schema {
 						Default:             booldefault.StaticBool(false),
 					},
 					"local_zone_type": schema.StringAttribute{
-						MarkdownDescription: "The local zone type used for the system domain. Type descriptions are available under \"local-zone:\" in the `unbound.conf(5)` manual page. Defaults to `\"\"`.",
+						MarkdownDescription: "The local zone type used for the system domain. Type descriptions are available under \"local-zone:\" in the `unbound.conf(5)` manual page. Defaults to `\"transparent\"`.",
 						Optional:            true,
 						Computed:            true,
-						Default:             stringdefault.StaticString(""),
+						Default:             stringdefault.StaticString("transparent"),
 						Validators: []validator.String{
 							stringvalidator.OneOf(
 								"always_nxdomain",
@@ -299,7 +299,6 @@ func settingsResourceSchema() schema.Schema {
 								"static",
 								"transparent",
 								"typetransparent",
-								"",
 							),
 						},
 					},

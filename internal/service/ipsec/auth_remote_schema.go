@@ -7,9 +7,11 @@ import (
 
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/opnsense-go/pkg/ipsec"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	dschema "github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/setdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -71,11 +73,15 @@ func authRemoteResourceSchema() schema.Schema {
 				ElementType:         types.StringType,
 				MarkdownDescription: "List of certificates for the AuthRemote Resource.",
 				Optional:            true,
+				Computed:            true,
+				Default:             setdefault.StaticValue(types.SetValueMust(types.StringType, []attr.Value{})),
 			},
 			"public_keys": schema.SetAttribute{
 				ElementType:         types.StringType,
 				MarkdownDescription: "List of public keys for the AuthRemote Resource.",
 				Optional:            true,
+				Computed:            true,
+				Default:             setdefault.StaticValue(types.SetValueMust(types.StringType, []attr.Value{})),
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "Optional description for the AuthRemote Resource.",
@@ -169,11 +175,11 @@ func convertAuthRemoteSchemaToStruct(d *authRemoteResourceModel) (*ipsec.IPsecAu
 
 func convertAuthRemoteStructToSchema(d *ipsec.IPsecAuthRemote) (*authRemoteResourceModel, error) {
 	// Convert Set fields
-	certificates, diag := types.SetValueFrom(context.TODO(), types.StringType, d.Certificates)
+	certificates, diag := types.SetValueFrom(context.TODO(), types.StringType, nonNil(d.Certificates))
 	if diag.HasError() {
 		return nil, fmt.Errorf("error converting certificates: %v", diag)
 	}
-	publicKeys, diag := types.SetValueFrom(context.TODO(), types.StringType, d.PublicKeys)
+	publicKeys, diag := types.SetValueFrom(context.TODO(), types.StringType, nonNil(d.PublicKeys))
 	if diag.HasError() {
 		return nil, fmt.Errorf("error converting public keys: %v", diag)
 	}
@@ -190,4 +196,11 @@ func convertAuthRemoteStructToSchema(d *ipsec.IPsecAuthRemote) (*authRemoteResou
 		Description:     types.StringValue(d.Description),
 		Id:              types.StringValue(""), // ID will be set after creation
 	}, nil
+}
+
+func nonNil(l api.SelectedMapList) []string {
+	if l == nil {
+		return []string{}
+	}
+	return l
 }

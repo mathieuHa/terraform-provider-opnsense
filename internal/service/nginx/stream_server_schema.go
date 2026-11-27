@@ -79,13 +79,13 @@ func streamServerResourceSchema() schema.Schema {
 				Default:             booldefault.StaticBool(false),
 			},
 			"certificate": schema.StringAttribute{
-				MarkdownDescription: "TLS Certificate. Defaults to ``.",
+				MarkdownDescription: "TLS Certificate. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to ``.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
 			},
 			"ca": schema.StringAttribute{
-				MarkdownDescription: "CA Certificate. Defaults to ``.",
+				MarkdownDescription: "CA Certificate. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to ``.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),

@@ -3,7 +3,7 @@ module github.com/browningluke/terraform-provider-opnsense
 go 1.25.8
 
 require (
-	github.com/browningluke/opnsense-go v0.40.1
+	github.com/browningluke/opnsense-go v0.41.0
 	github.com/hashicorp/terraform-plugin-docs v0.25.0
 	github.com/hashicorp/terraform-plugin-framework v1.16.1
 	github.com/hashicorp/terraform-plugin-framework-validators v0.19.0
@@ -89,4 +89,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/browningluke/opnsense-go => github.com/mathieuHa/opnsense-go v0.40.1
+replace github.com/browningluke/opnsense-go => github.com/mathieuHa/opnsense-go v0.41.0

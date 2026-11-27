@@ -304,7 +304,7 @@ func convertSubnetSchemaToStruct(d *subnetResourceModel) (*kea.SubnetV4, error) 
 			DomainNameServers: tools.SetToStringSlice(d.DomainNameServers),
 			DomainSearch:      tools.SetToStringSlice(d.DomainSearch),
 			Routers:           tools.SetToStringSlice(d.Routers),
-			StaticRoutes:      strings.Join(routePieceList, ";"),
+			StaticRoutes:      joinStaticRoutes(routePieceList),
 			DomainName:        d.DomainName.ValueString(),
 			NtpServers:        tools.SetToStringSlice(d.NTPServers),
 			TimeServers:       tools.SetToStringSlice(d.TimeServers),
@@ -342,24 +342,9 @@ func convertSubnetStructToSchema(d *kea.SubnetV4) (*subnetResourceModel, error) 
 	)
 
 	// Parse static routes
-	routeSlice := strings.Split(d.OptionData.StaticRoutes, ";")
-	routes := []staticRouteModel{}
+	routes := parseStaticRoutes(d.OptionData.StaticRoutes)
 
-	// Try to fill list
-	if len(routeSlice) > 0 {
-		for _, i := range routeSlice {
-			routePiece := strings.Split(i, ",")
-			// Skip if not properly formed route
-			if len(routePiece) != 2 {
-				continue
-			}
-
-			routes = append(routes, staticRouteModel{
-				DestinationIp: types.StringValue(routePiece[0]),
-				RouterIp:      types.StringValue(routePiece[1]),
-			})
-		}
-
+	if len(routes) > 0 {
 		v, _ = types.SetValueFrom(
 			context.Background(),
 			types.ObjectType{

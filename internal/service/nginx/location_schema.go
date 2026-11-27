@@ -139,10 +139,11 @@ func locationResourceSchema() schema.Schema {
 				Default:             stringdefault.StaticString(""),
 			},
 			"path_prefix": schema.StringAttribute{
-				MarkdownDescription: "Define an optional path prefix for this location. It will be prepended to the path so http://www.example.com/index.php will be sent to http://www.example.com/app/index.php on your upstream if you choose \"/app\" as path prefix. Defaults to ``.",
+				MarkdownDescription: "Define an optional path prefix for this location. It will be prepended to the path so http://www.example.com/index.php will be sent to http://www.example.com/app/index.php on your upstream if you choose \"/app\" as path prefix. Defaults to ``. No spaces, tabs or double quotes.",
 				Optional:            true,
 				Computed:            true,
 				Default:             stringdefault.StaticString(""),
+				Validators:          []validator.String{noSpaces},
 			},
 			"cache_path": schema.StringAttribute{
 				MarkdownDescription: "Choose a cache directory if you want to cache responses. Defaults to ``.",

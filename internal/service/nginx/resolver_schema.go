@@ -33,8 +33,9 @@ func resolverResourceSchema() schema.Schema {
 
 		Attributes: map[string]schema.Attribute{
 			"description": schema.StringAttribute{
-				MarkdownDescription: "Brief description for reference.",
+				MarkdownDescription: "Brief description for reference. No spaces, tabs or double quotes.",
 				Required:            true,
+				Validators:          []validator.String{noSpaces},
 			},
 			"address": schema.SetAttribute{
 				MarkdownDescription: "Enter a list of IP addresses and ports (optional). Uses port 53 if omitted. Like \"8.8.8.8, [2001:4860:4860::8888], 8.8.8.8:5353\".",

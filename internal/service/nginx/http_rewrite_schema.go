@@ -29,16 +29,18 @@ func httpRewriteResourceSchema() schema.Schema {
 
 		Attributes: map[string]schema.Attribute{
 			"description": schema.StringAttribute{
-				MarkdownDescription: "Enter a short description like a name for this redirect.",
+				MarkdownDescription: "Enter a short description like a name for this redirect. No spaces, tabs or double quotes.",
 				Required:            true,
+				Validators:          []validator.String{noSpaces},
 			},
 			"source": schema.StringAttribute{
 				MarkdownDescription: "Enter a regular expression to match the URL.",
 				Required:            true,
 			},
 			"destination": schema.StringAttribute{
-				MarkdownDescription: "You may use replacement strings like $1 for the first match group from the source here.",
+				MarkdownDescription: "You may use replacement strings like $1 for the first match group from the source here. No spaces, tabs or double quotes.",
 				Required:            true,
+				Validators:          []validator.String{noSpaces},
 			},
 			"flag": schema.StringAttribute{
 				MarkdownDescription: "Stop rule processing (break) or perform (internal) redirect (last). Return a moved permanently status code (301) or a temporary redirect (302). One of `break`, `last`, `redirect`, `permanent`. Defaults to ``.",

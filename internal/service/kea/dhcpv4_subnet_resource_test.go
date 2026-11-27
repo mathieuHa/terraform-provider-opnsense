@@ -76,3 +76,33 @@ resource "opnsense_kea_dhcpv4_subnet" "test" {
 }
 `, subnet, pool, autoCollect, router, dns, description)
 }
+
+func TestAccKeaDhcpv4SubnetStaticRoutes(t *testing.T) {
+	config := `
+resource "opnsense_kea_dhcpv4_subnet" "test" {
+  subnet = "192.168.201.0/24"
+  static_routes = [
+    { destination_ip = "10.10.10.10", router_ip = "192.168.201.1" },
+    { destination_ip = "10.10.10.11", router_ip = "192.168.201.2" },
+  ]
+}
+`
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.AccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.ProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("opnsense_kea_dhcpv4_subnet.test", "static_routes.#", "2"),
+					resource.TestCheckTypeSetElemNestedAttrs("opnsense_kea_dhcpv4_subnet.test", "static_routes.*", map[string]string{"destination_ip": "10.10.10.11", "router_ip": "192.168.201.2"}),
+				),
+			},
+			{
+				ResourceName:      "opnsense_kea_dhcpv4_subnet.test",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}

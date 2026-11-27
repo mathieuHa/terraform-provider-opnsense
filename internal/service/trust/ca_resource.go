@@ -160,6 +160,8 @@ func (r *caResource) Update(ctx context.Context, req resource.UpdateRequest, res
 		return
 	}
 
+	keepCaMaterial(ca)
+
 	err = r.client.Trust().UpdateCa(ctx, data.Id.ValueString(), ca)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error",
@@ -214,9 +216,13 @@ func (r *caResource) ImportState(ctx context.Context, req resource.ImportStateRe
 func preserveCaStateFields(model *caResourceModel, state *caResourceModel) {
 	if !state.Action.IsNull() && !state.Action.IsUnknown() {
 		model.Action = state.Action
+	} else {
+		model.Action = types.StringValue("internal")
 	}
 	if !state.Lifetime.IsNull() && !state.Lifetime.IsUnknown() {
 		model.Lifetime = state.Lifetime
+	} else {
+		model.Lifetime = types.StringValue("3650")
 	}
 	// Preserve key material and validity timestamps from prior state once set.
 	if !state.Crt.IsNull() && !state.Crt.IsUnknown() && state.Crt.ValueString() != "" {
