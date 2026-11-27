@@ -11,6 +11,7 @@ import (
 )
 
 func TestAccDnsmasqSettingsResource(t *testing.T) {
+	acctest.AccPreCheck(t)
 
 	c := opnsense.NewClient(acctest.Client())
 	cur, err := c.Dnsmasq().DnsmasqConfigGet(context.Background())

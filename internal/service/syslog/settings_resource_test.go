@@ -11,6 +11,7 @@ import (
 )
 
 func TestAccSyslogSettingsResource(t *testing.T) {
+	acctest.AccPreCheck(t)
 
 	c := opnsense.NewClient(acctest.Client())
 	cur, err := c.Syslog().SyslogConfigGet(context.Background())

@@ -11,6 +11,7 @@ import (
 )
 
 func TestAccNetflowSettingsResource(t *testing.T) {
+	acctest.AccPreCheck(t)
 
 	c := opnsense.NewClient(acctest.Client())
 	cur, err := c.Diagnostics().NetflowConfigGet(context.Background())
@@ -54,6 +55,7 @@ resource "opnsense_netflow_settings" "test" {
 }
 
 func TestAccSystemhealthSettingsResource(t *testing.T) {
+	acctest.AccPreCheck(t)
 
 	c := opnsense.NewClient(acctest.Client())
 	cur, err := c.Diagnostics().SystemHealthConfigGet(context.Background())

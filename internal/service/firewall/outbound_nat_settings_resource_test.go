@@ -11,6 +11,7 @@ import (
 )
 
 func TestAccFirewallOutboundNatSettingsResource(t *testing.T) {
+	acctest.AccPreCheck(t)
 
 	c := opnsense.NewClient(acctest.Client())
 	cur, err := c.Firewall().OutboundNatConfigGet(context.Background())
@@ -51,6 +52,7 @@ resource "opnsense_firewall_outbound_nat_settings" "test" {
 }
 
 func TestAccFirewallAliasSettingsResource(t *testing.T) {
+	acctest.AccPreCheck(t)
 
 	c := opnsense.NewClient(acctest.Client())
 	cur, err := c.Firewall().AliasConfigGet(context.Background())

@@ -32,7 +32,7 @@ Manage your OPNsense firewalls as code: firewall rules and aliases, NAT, VPNs, D
 
     ---
 
-    Published on the OpenTofu registry as `mathieuHa/opnsense`, every release signed and tested against OPNsense 26.7.
+    Published on the OpenTofu registry as `mathieuHa/opnsense`, every release signed and tested against the latest OPNsense 26.7 patch release.
 
     [→ Releases](https://github.com/mathieuHa/terraform-provider-opnsense/releases)
 

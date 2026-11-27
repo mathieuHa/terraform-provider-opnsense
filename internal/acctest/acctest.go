@@ -45,6 +45,9 @@ func protoV6ProviderFactoriesInit(ctx context.Context, providerNames ...string) 
 }
 
 func AccPreCheck(t *testing.T) {
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("TF_ACC must be set for acceptance tests")
+	}
 	if v := os.Getenv("OPNSENSE_URI"); v == "" {
 		t.Fatal("OPNSENSE_URI must be set for acceptance tests")
 	}

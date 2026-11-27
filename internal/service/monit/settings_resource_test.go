@@ -11,6 +11,7 @@ import (
 )
 
 func TestAccMonitSettingsResource(t *testing.T) {
+	acctest.AccPreCheck(t)
 
 	c := opnsense.NewClient(acctest.Client())
 	cur, err := c.Monit().GeneralConfigGet(context.Background())

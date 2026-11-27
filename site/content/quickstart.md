@@ -5,7 +5,7 @@ This walks you from an empty directory to a firewall alias, a filter rule and a 
 ## Requirements
 
 - [OpenTofu](https://opentofu.org/docs/intro/install/) 1.6 or later, or Terraform 1.5 or later.
-- OPNsense 26.x. Each release is tested against OPNsense 26.7; some resources use API endpoints that only exist in recent releases.
+- OPNsense 26.x. Each release is tested against the latest OPNsense 26.7 patch release (26.7.10 for v0.40.1); some resources use API endpoints that only exist in recent releases.
 - Network access from where you run `tofu` to the OPNsense web GUI (HTTPS).
 
 ## 1. Create an API key
