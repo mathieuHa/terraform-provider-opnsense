@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/browningluke/terraform-provider-opnsense/internal/tools"
 
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/opnsense-go/pkg/errs"
@@ -73,7 +74,12 @@ func (r *routeResource) Create(ctx context.Context, req resource.CreateRequest, 
 	}
 
 	// Add route to unbound
-	id, err := r.client.Routes().AddRoute(ctx, route)
+	var id string
+	err = tools.RetryWhileGatewayListStale(ctx, func() error {
+		var addErr error
+		id, addErr = r.client.Routes().AddRoute(ctx, route)
+		return addErr
+	})
 	if err != nil {
 		if id != "" {
 			data.Id = types.StringValue(id)
@@ -165,7 +171,9 @@ func (r *routeResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	}
 
 	// Update route in OPNsense core
-	err = r.client.Routes().UpdateRoute(ctx, data.Id.ValueString(), route)
+	err = tools.RetryWhileGatewayListStale(ctx, func() error {
+		return r.client.Routes().UpdateRoute(ctx, data.Id.ValueString(), route)
+	})
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error",
 			fmt.Sprintf("Unable to create route, got error: %s", err))

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/browningluke/terraform-provider-opnsense/internal/tools"
 
 	"github.com/browningluke/opnsense-go/pkg/api"
 	"github.com/browningluke/opnsense-go/pkg/errs"
@@ -68,7 +69,7 @@ func (r *gatewayGroupResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	var id string
-	err = retryWhileGatewayListStale(ctx, func() error {
+	err = tools.RetryWhileGatewayListStale(ctx, func() error {
 		var addErr error
 		id, addErr = r.client.Routing().AddGatewayGroup(ctx, group)
 		return addErr
@@ -150,7 +151,7 @@ func (r *gatewayGroupResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	err = retryWhileGatewayListStale(ctx, func() error {
+	err = tools.RetryWhileGatewayListStale(ctx, func() error {
 		return r.client.Routing().UpdateGatewayGroup(ctx, data.Id.ValueString(), group)
 	})
 	if err != nil {
