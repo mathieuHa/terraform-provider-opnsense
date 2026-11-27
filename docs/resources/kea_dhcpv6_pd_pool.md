@@ -14,8 +14,8 @@ Configure DHCPv6 prefix delegation pools for Kea.
 ```terraform
 resource "opnsense_kea_dhcpv6_pd_pool" "example" {
   subnet_id     = opnsense_kea_dhcpv6_subnet.lan.id
-  prefix        = "2001:db8::/48"
-  prefix_len    = "48"
+  prefix        = "2001:db8:100::"
+  prefix_len    = "56"
   delegated_len = "64"
 
   description = "example PD pool"
@@ -23,7 +23,10 @@ resource "opnsense_kea_dhcpv6_pd_pool" "example" {
 
 resource "opnsense_kea_dhcpv6_subnet" "lan" {
   subnet      = "2001:db8::/64"
+  interface   = "lan"
   description = "LAN IPv6"
+
+  depends_on = [opnsense_kea_dhcpv6_settings.this]
 }
 ```
 
@@ -33,7 +36,7 @@ resource "opnsense_kea_dhcpv6_subnet" "lan" {
 ### Required
 
 - `delegated_len` (String) Length of the delegated prefix.
-- `prefix` (String) IPv6 prefix for the PD pool (e.g. `"2001:db8::/48"`).
+- `prefix` (String) IPv6 prefix address for the PD pool, without its length (e.g. `"2001:db8:100::"`); the length goes in `prefix_len`.
 - `prefix_len` (String) Prefix length of the PD pool prefix.
 - `subnet_id` (String) Subnet ID the PD pool belongs to.
 

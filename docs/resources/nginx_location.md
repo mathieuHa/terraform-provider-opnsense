@@ -55,7 +55,7 @@ resource "opnsense_nginx_location" "root" {
 - `limit_request_connections` (Set of String) If you choose multiple limits, the strictest will be used. Defaults to `[]`.
 - `matchtype` (String) Choose how to match on "URL Pattern". One of `=`, `~`, `~*`, `^~`. Defaults to ``.
 - `max_body_size` (String) If the request is larger, it will be rejectet with error 413 (Request Entity Too Large). For example, you can enter 200m. Defaults to ``.
-- `path_prefix` (String) Define an optional path prefix for this location. It will be prepended to the path so http://www.example.com/index.php will be sent to http://www.example.com/app/index.php on your upstream if you choose "/app" as path prefix. Defaults to ``.
+- `path_prefix` (String) Define an optional path prefix for this location. It will be prepended to the path so http://www.example.com/index.php will be sent to http://www.example.com/app/index.php on your upstream if you choose "/app" as path prefix. Defaults to ``. No spaces, tabs or double quotes.
 - `php_enable` (Boolean) Only use this setting if you know what you are doing. If not, expect your machine to get compromised. Use this setting when you want to run a local PHP application or call an external upstream, if selected, via FastCGI. Example upstreams are PHP-FPM or Rails via FastCGI API. Defaults to `false`.
 - `php_override_scriptname` (String) If you set this setting, all requests are sent to this script instead of the request path (URL). Not using this setting on a remote instance can be dangerous. Defaults to ``.
 - `proxy_buffer_size` (Number) By default this is the size of one page (4 or 8 Kilobytes). It can be changed. Defaults to `-1` (OPNsense default).

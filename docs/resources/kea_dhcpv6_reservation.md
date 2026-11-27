@@ -29,7 +29,10 @@ resource "opnsense_kea_dhcpv6_reservation" "example" {
 
 resource "opnsense_kea_dhcpv6_subnet" "lan" {
   subnet      = "2001:db8::/64"
+  interface   = "lan"
   description = "LAN IPv6"
+
+  depends_on = [opnsense_kea_dhcpv6_settings.this]
 }
 ```
 

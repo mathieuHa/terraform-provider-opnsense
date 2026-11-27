@@ -1,6 +1,6 @@
 // Enabled with description
 resource "opnsense_unbound_domain_override" "one_override" {
-  enabled = true
+  enabled     = true
   description = "Example override"
 
   domain = "example.lan"

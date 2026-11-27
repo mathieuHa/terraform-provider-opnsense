@@ -28,7 +28,7 @@ resource "opnsense_firewall_nat" "example_two" {
   }
 
   target = {
-    ip = "wanip"
+    ip   = "wanip"
     port = "http"
   }
 
@@ -41,19 +41,25 @@ resource "opnsense_firewall_nat" "example_three" {
   protocol  = "TCP"
 
   source = {
-    net = "192.168.0.0/16" # This is equiv. to WAN Net
+    net    = "192.168.0.0/16" # This is equiv. to WAN Net
     invert = true
   }
 
   destination = {
-    net  = "examplealias"
+    net  = opnsense_firewall_alias.web_servers.name
     port = "80-443"
   }
 
   target = {
-    ip = "wanip"
+    ip   = "wanip"
     port = "443"
   }
 
   description = "Example"
+}
+
+resource "opnsense_firewall_alias" "web_servers" {
+  name    = "web_servers"
+  type    = "host"
+  content = ["10.0.20.10", "10.0.20.11"]
 }

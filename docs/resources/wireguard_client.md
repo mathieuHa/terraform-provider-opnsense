@@ -15,7 +15,7 @@ Client resources can be used to setup Wireguard clients.
 // Configure a peer
 resource "opnsense_wireguard_client" "example0" {
   enabled = false
-  name = "example0"
+  name    = "example0"
 
   public_key = "/CPjuEdvHJulOIQ56TNyeNHkDJmRCMor4U9k68vMyac="
   psk        = "CJG05xgaLA8RiisoCAmp2U0v329LsIdK1GW4EMc9fmU="

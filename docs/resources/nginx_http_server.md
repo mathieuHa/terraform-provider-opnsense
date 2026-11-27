@@ -16,7 +16,7 @@ nginx HTTP servers (**Services ▸ Nginx ▸ Configuration ▸ HTTP(S) ▸ HTTP 
 resource "opnsense_nginx_http_server" "app" {
   servername           = ["app.example.com"]
   listen_https_address = ["443"]
-  certificate          = opnsense_trust_cert.app.id
+  certificate          = opnsense_trust_cert.web.ref_id
   https_only           = true
   locations            = [opnsense_nginx_location.root.id]
 }
@@ -35,8 +35,8 @@ resource "opnsense_nginx_http_server" "app" {
 - `advanced_acl_server` (String) Choose a backend for advanced authentication. If you don't have one, configure it under System -> Access -> Servers. If nothing is configured, the local database is used. Defaults to ``.
 - `block_nonpublic_data` (Boolean) Blocks files like .htaccess files or other files not intended for the public. Defaults to `false`.
 - `body_buffer_size` (String) If the request exceeds this size, it will be written to disk. Enter a number and a unit like 1m. Defaults to ``.
-- `ca` (Set of String) Trusted CA certificates. Defaults to `[]`.
-- `certificate` (String) TLS Certificate. Defaults to ``.
+- `ca` (Set of String) Trusted CA certificates. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to `[]`.
+- `certificate` (String) TLS Certificate. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to ``.
 - `charset` (String) Charset. One of `utf-8`. Defaults to ``.
 - `client_header_buffer_size` (Number) Contains the size of a header Buffer. If a header or the request line does not fit into it, a large header buffer will be used. Defaults to `1`.
 - `default_server` (Boolean) Default Server. Defaults to `false`.

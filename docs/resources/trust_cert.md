@@ -43,7 +43,7 @@ resource "opnsense_trust_cert" "web" {
 
 ### Optional
 
-- `action` (String) Certificate action: `internal` (generate signed by CA), `external` (CSR only), `import` (import existing), `sign_csr`, `import_csr`, `reissue`, `manual`. Defaults to `internal`.
+- `action` (String) Certificate action: `internal` (generate signed by CA), `external` (CSR only), `import` (import existing), `sign_csr`, `import_csr`, `reissue`, `manual`. Defaults to `internal`. Only used when the object is created: later changes are ignored. Updates keep the key and certificate; changing a key or subject attribute replaces the object.
 - `altnames_dns` (String) DNS Subject Alternative Names, newline or CRLF separated (e.g. `www.example.com\napi.example.com`).
 - `altnames_email` (String) Email Subject Alternative Names, newline separated.
 - `altnames_ip` (String) IP Subject Alternative Names, newline separated.
@@ -59,7 +59,7 @@ resource "opnsense_trust_cert" "web" {
 - `digest` (String) Digest algorithm: `sha224`, `sha256` (default), `sha384`, `sha512`. Defaults to `sha256`.
 - `email` (String)
 - `key_type` (String) Key type and size: `512`, `1024`, `2048` (default), `3072`, `4096`, `8192`, `prime256v1`, `secp384r1`, `secp521r1`. Defaults to `2048`.
-- `lifetime` (String) Certificate validity period in days. Defaults to `397` (maximum accepted by modern browsers for server certificates).
+- `lifetime` (String) Certificate validity period in days. Defaults to `397` (maximum accepted by modern browsers for server certificates). Only used when the object is created.
 - `ocsp_uri` (String) OCSP responder URI.
 - `organization` (String)
 - `organizational_unit` (String)

@@ -3,7 +3,7 @@ resource "opnsense_haproxy_frontend" "https" {
   bind             = ["0.0.0.0:443"]
   mode             = "http"
   ssl_enabled      = true
-  ssl_certificates = [opnsense_trust_cert.web.id]
+  ssl_certificates = [opnsense_trust_cert.web.ref_id]
   default_backend  = opnsense_haproxy_backend.web.id
   linked_actions   = [opnsense_haproxy_action.api.id]
 }

@@ -1,7 +1,10 @@
 # Minimal example
 resource "opnsense_kea_dhcpv6_subnet" "lan" {
-  subnet      = "2001:db8::/64"
+  subnet      = "2001:db8:1::/64"
+  interface   = "lan"
   description = "LAN IPv6"
+
+  depends_on = [opnsense_kea_dhcpv6_settings.this]
 }
 
 # Full resource
@@ -16,7 +19,7 @@ resource "opnsense_kea_dhcpv6_subnet" "example" {
   allocator    = "random"
   pd_allocator = "random"
 
-  interface = "em0"
+  interface = "lan"
 
   dns_servers = [
     "2001:db8::53",

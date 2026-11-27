@@ -41,8 +41,14 @@ resource "opnsense_openvpn_instance" "client" {
   protocol = "udp"
 
   remote                = ["vpn.example.com:1194"]
+  certificate_authority = opnsense_trust_ca.vpn.ref_id
   verify_client_cert    = "none"
   remote_cert_tls       = true
+}
+
+resource "opnsense_trust_ca" "vpn" {
+  description = "VPN provider CA"
+  common_name = "vpn-ca.example.com"
 }
 ```
 

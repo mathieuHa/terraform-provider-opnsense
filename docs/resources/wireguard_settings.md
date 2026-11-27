@@ -34,8 +34,10 @@ Unlike regular Terraform resources, `opnsense_wireguard_settings` behaves as fol
 ## Example Usage
 
 ```terraform
-// Import the singleton resource before managing it:
-// terraform import opnsense_wireguard_settings.settings wireguard_settings
+import {
+  to = opnsense_wireguard_settings.settings
+  id = "wireguard_settings"
+}
 
 resource "opnsense_wireguard_settings" "settings" {
   enabled = true

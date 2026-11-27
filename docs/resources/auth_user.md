@@ -40,7 +40,7 @@ resource "opnsense_auth_user" "monitoring" {
 - `language` (String) GUI language, e.g. `en_US`; unset means the system default.
 - `password` (String, Sensitive) Password. Never read back from OPNsense; leave unset to keep the current one.
 - `privileges` (Set of String) Privileges granted to the user directly, on top of those of its groups. Defaults to `[]`.
-- `scrambled_password` (Boolean) When enabled, OPNsense sets a random password, for accounts that only use API keys or SSH keys. Defaults to `false`.
+- `scrambled_password` (Boolean) When enabled, OPNsense sets a random password, for accounts that only use API keys or SSH keys. The password is scrambled when the user is created with it, or when it changes from `false` to `true`; an imported user is recorded as `true`, so importing never scrambles an existing password. Defaults to `false`.
 - `shell` (String) Login shell for SSH and console access; unset means no shell.
 - `uid` (String) User ID assigned by OPNsense.
 

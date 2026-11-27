@@ -14,7 +14,7 @@ Domain overrides can be used to forward queries for specific domains (and subseq
 ```terraform
 // Enabled with description
 resource "opnsense_unbound_domain_override" "one_override" {
-  enabled = true
+  enabled     = true
   description = "Example override"
 
   domain = "example.lan"

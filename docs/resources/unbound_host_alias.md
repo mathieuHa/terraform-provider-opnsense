@@ -14,21 +14,21 @@ Host aliases can be used to create alternative names for a Host
 ```terraform
 // 'A' record
 resource "opnsense_unbound_host_override" "a_override" {
-  enabled = true
+  enabled     = true
   description = "A record override"
 
   hostname = "*"
-  domain = "example.com"
-  server = "192.168.1.1"
+  domain   = "example.com"
+  server   = "192.168.1.1"
 }
 
 // Enabled alias with description
 resource "opnsense_unbound_host_alias" "one_alias" {
   override = opnsense_unbound_host_override.a_override.id
 
-  enabled = true
-  hostname = "*"
-  domain = "1.example.com"
+  enabled     = true
+  hostname    = "*"
+  domain      = "1.example.com"
   description = "Example 1"
 }
 
@@ -36,9 +36,9 @@ resource "opnsense_unbound_host_alias" "one_alias" {
 resource "opnsense_unbound_host_alias" "two_alias" {
   override = opnsense_unbound_host_override.a_override.id
 
-  enabled = false
+  enabled  = false
   hostname = "*"
-  domain = "2.example.com"
+  domain   = "2.example.com"
 }
 ```
 

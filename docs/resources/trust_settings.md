@@ -24,8 +24,10 @@ After importing, you can manage the configuration with `terraform apply`. Runnin
 ## Example Usage
 
 ```terraform
-# This is a singleton resource. It must be imported before use:
-# terraform import opnsense_trust_settings.settings trust_settings
+import {
+  to = opnsense_trust_settings.settings
+  id = "trust_settings"
+}
 
 resource "opnsense_trust_settings" "settings" {
   store_intermediate_certs  = false

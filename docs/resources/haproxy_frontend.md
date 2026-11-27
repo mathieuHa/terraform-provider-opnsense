@@ -18,7 +18,7 @@ resource "opnsense_haproxy_frontend" "https" {
   bind             = ["0.0.0.0:443"]
   mode             = "http"
   ssl_enabled      = true
-  ssl_certificates = [opnsense_trust_cert.web.id]
+  ssl_certificates = [opnsense_trust_cert.web.ref_id]
   default_backend  = opnsense_haproxy_backend.web.id
   linked_actions   = [opnsense_haproxy_action.api.id]
 }
@@ -60,15 +60,15 @@ resource "opnsense_haproxy_frontend" "https" {
 - `prometheus_path` (String) The path where the Prometheus exporter can be accessed. Defaults to `/metrics`.
 - `ssl_advanced_enabled` (Boolean) Enable advanced SSL settings. Defaults to `false`.
 - `ssl_bind_options` (Set of String) Used to enforce or disable certain SSL options. One of `no-sslv3`, `no-tlsv10`, `no-tlsv11`, `no-tlsv12`, `no-tlsv13`, `no-tls-tickets`, `force-sslv3`, `force-tlsv10`, `force-tlsv11`, `force-tlsv12`, `force-tlsv13`, `prefer-client-ciphers`, `strict-sni`. Defaults to `["prefer-client-ciphers"]`.
-- `ssl_certificates` (Set of String) Select certificates to use for SSL offloading. HAProxy's SNI recognition will determine the correct certificate automatically. If no SNI is provided by the client then the first certificate will be presented.To import additional certificates, go to Certificate Manager. Defaults to `[]`.
+- `ssl_certificates` (Set of String) Select certificates to use for SSL offloading. HAProxy's SNI recognition will determine the correct certificate automatically. If no SNI is provided by the client then the first certificate will be presented.To import additional certificates, go to Certificate Manager. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to `[]`.
 - `ssl_cipher_list` (String) It sets the default string describing the list of cipher algorithms ("cipher suite") that are negotiated during the SSL/TLS handshake up to TLSv1.2. Defaults to `ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256`.
 - `ssl_cipher_suites` (String) It sets the default string describing the list of cipher algorithms ("cipher suite") that are negotiated during the SSL/TLS handshake for TLSv1.3. Defaults to `TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256`.
-- `ssl_client_auth_cas` (Set of String) Select CA certificates to use for client certificate authentication. To import additional CAs, go to CA Manager. Defaults to `[]`.
-- `ssl_client_auth_crls` (Set of String) Select CRLs to use for client certificate authentication. To import additional CRLs, go to CRL Manager. Defaults to `[]`.
+- `ssl_client_auth_cas` (Set of String) Select CA certificates to use for client certificate authentication. To import additional CAs, go to CA Manager. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to `[]`.
+- `ssl_client_auth_crls` (Set of String) Select CRLs to use for client certificate authentication. To import additional CRLs, go to CRL Manager. Takes the `ref_id` of an `opnsense_trust_crl`, not its UUID. Defaults to `[]`.
 - `ssl_client_auth_enabled` (Boolean) Enable Client Certificate Authentication. Defaults to `false`.
 - `ssl_client_auth_verify` (String) If set to 'optional' or 'required', client certificate is requested. One of `none`, `optional`, `required`. Defaults to `required`.
 - `ssl_custom_options` (String) Pass additional SSL parameters to the HAProxy configuration. Defaults to ``.
-- `ssl_default_certificate` (String) This certificate will be presented if no SNI is provided by the client or if the client provides an SNI hostname which does not match any certificate. This parameter is optional to enforce a certain sort order for certificates. Defaults to ``.
+- `ssl_default_certificate` (String) This certificate will be presented if no SNI is provided by the client or if the client provides an SNI hostname which does not match any certificate. This parameter is optional to enforce a certain sort order for certificates. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to ``.
 - `ssl_enabled` (Boolean) Enable SSL offloading. Defaults to `false`.
 - `ssl_hsts_enabled` (Boolean) Enable HTTP Strict Transport Security. Defaults to `true`.
 - `ssl_hsts_include_sub_domains` (Boolean) Enable if all present and future subdomains will be HTTPS. Defaults to `false`.

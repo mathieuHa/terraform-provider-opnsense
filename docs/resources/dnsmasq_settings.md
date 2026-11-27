@@ -20,6 +20,7 @@ import {
 
 resource "opnsense_dnsmasq_settings" "this" {
   enable      = true
+  port        = 0
   interface   = ["lan"]
   cache_size  = 10000
   dhcp_fqdn   = true

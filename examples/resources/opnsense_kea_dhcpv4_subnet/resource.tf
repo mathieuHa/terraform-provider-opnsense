@@ -1,6 +1,6 @@
 # Minimal example
 resource "opnsense_kea_dhcpv4_subnet" "lan" {
-  subnet      = "10.8.0.0/16"
+  subnet      = "10.7.0.0/16"
   description = "LAN"
 }
 

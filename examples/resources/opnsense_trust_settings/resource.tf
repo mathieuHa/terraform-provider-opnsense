@@ -1,5 +1,7 @@
-# This is a singleton resource. It must be imported before use:
-# terraform import opnsense_trust_settings.settings trust_settings
+import {
+  to = opnsense_trust_settings.settings
+  id = "trust_settings"
+}
 
 resource "opnsense_trust_settings" "settings" {
   store_intermediate_certs  = false

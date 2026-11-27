@@ -14,7 +14,7 @@ Pushes the configuration to the backup firewall and reconfigures its services, l
 ```terraform
 resource "opnsense_hasync_sync" "push" {
   triggers = {
-    rules = join(",", [for r in opnsense_firewall_filter.all : r.id])
+    rules = join(",", [opnsense_firewall_filter.allow_https.id, opnsense_firewall_filter.icmp_echo.id])
   }
   depends_on = [opnsense_hasync_settings.this]
 }

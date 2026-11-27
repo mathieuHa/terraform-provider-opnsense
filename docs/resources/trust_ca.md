@@ -43,7 +43,7 @@ resource "opnsense_trust_ca" "intermediate" {
 
 ### Optional
 
-- `action` (String) Creation action: `internal` (generate a new CA), `existing` (import an existing CA), or `ocsp` (create an OCSP signing certificate). Defaults to `internal`.
+- `action` (String) Creation action: `internal` (generate a new CA), `existing` (import an existing CA), or `ocsp` (create an OCSP signing certificate). Defaults to `internal`. Only used when the object is created: later changes are ignored. Updates keep the key and certificate; changing a key or subject attribute replaces the object.
 - `caref` (String) Reference ID (`ref_id`) of the parent CA. Used for intermediate CAs or OCSP signers. Leave empty for root CAs.
 - `city` (String) City or locality name.
 - `common_name` (String) Common name (CN) for the CA certificate. Required unless the CA certificate is imported.
@@ -53,7 +53,7 @@ resource "opnsense_trust_ca" "intermediate" {
 - `digest` (String) Digest algorithm: `sha224`, `sha256` (default), `sha384`, `sha512`. Defaults to `sha256`.
 - `email` (String) Email address for the CA subject.
 - `key_type` (String) Key type and size: `512`, `1024`, `2048` (default), `3072`, `4096`, `8192`, `prime256v1`, `secp384r1`, `secp521r1`. Defaults to `2048`.
-- `lifetime` (String) CA validity period in days. Defaults to `3650` (10 years). Note: OPNsense does not return the configured lifetime on subsequent reads; the value stored in Terraform state is preserved.
+- `lifetime` (String) CA validity period in days. Defaults to `3650` (10 years). Note: OPNsense does not return the configured lifetime on subsequent reads; the value stored in Terraform state is preserved. Only used when the object is created.
 - `ocsp_uri` (String) OCSP responder URI embedded in issued certificates.
 - `organization` (String) Organisation name.
 - `organizational_unit` (String) Organisational unit name.

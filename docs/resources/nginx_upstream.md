@@ -36,12 +36,12 @@ resource "opnsense_nginx_upstream" "app" {
 - `load_balancing_algorithm` (String) Load Balancing Algorithm. One of `ip_hash`. Defaults to ``.
 - `proxy_protocol` (Boolean) If you enable the proxy protocol, an upstream proxy or server will get the client IP and the server port before the real traffic is sent. Defaults to `false`.
 - `store` (Boolean) Store the response on the local storage. Defaults to `false`.
-- `tls_client_certificate` (String) Authenticate on the Server using a client certificate. Defaults to ``.
+- `tls_client_certificate` (String) Authenticate on the Server using a client certificate. Takes the `ref_id` of an `opnsense_trust_cert`, not its UUID. Defaults to ``.
 - `tls_enable` (Boolean) Use TLS (HTTPS) to connect to the server. Defaults to `false`.
 - `tls_name_override` (String) Force a specific hostname for the backend connection instead of passing the hostname from the downstream connection to the upstream connection. Defaults to ``.
 - `tls_protocol_versions` (Set of String) TLS: Supported Versions. One of `TLSv1`, `TLSv1.1`, `TLSv1.2`, `TLSv1.3`. Defaults to `[]`.
 - `tls_session_reuse` (Boolean) TLS: Session Reuse. Defaults to `true`.
-- `tls_trusted_certificate` (Set of String) TLS: Trusted Certificate. Defaults to `[]`.
+- `tls_trusted_certificate` (Set of String) TLS: Trusted Certificate. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to `[]`.
 - `tls_verify` (Boolean) Don't turn it off unless you really know what you are doing! Never do it because a random website tells you to do. Defaults to `true`.
 - `tls_verify_depth` (Number) Choose how many sub-CAs can be between the server certificate and a trusted CA. 1 means the certificate has to be signed directly by a CA. Defaults to `-1` (OPNsense default).
 - `x_forwarded_host_verbatim` (Boolean) Use Host header value from the client request ($http_host) for X-Forwarded-Host header. $host variable is used by default. Enabling this may cause incorrect behavior in case of malicious requests such as incorrect hostnames being logged or invalid redirects being performed. Defaults to `false`.

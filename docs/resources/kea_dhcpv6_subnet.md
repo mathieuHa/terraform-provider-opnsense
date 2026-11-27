@@ -14,8 +14,11 @@ Configure DHCPv6 subnets for Kea.
 ```terraform
 # Minimal example
 resource "opnsense_kea_dhcpv6_subnet" "lan" {
-  subnet      = "2001:db8::/64"
+  subnet      = "2001:db8:1::/64"
+  interface   = "lan"
   description = "LAN IPv6"
+
+  depends_on = [opnsense_kea_dhcpv6_settings.this]
 }
 
 # Full resource
@@ -30,7 +33,7 @@ resource "opnsense_kea_dhcpv6_subnet" "example" {
   allocator    = "random"
   pd_allocator = "random"
 
-  interface = "em0"
+  interface = "lan"
 
   dns_servers = [
     "2001:db8::53",
@@ -51,6 +54,7 @@ resource "opnsense_kea_dhcpv6_subnet" "example" {
 
 ### Required
 
+- `interface` (String) Interface to listen on, e.g. `lan`. It must be one of the interfaces selected in the Kea DHCPv6 settings.
 - `subnet` (String) IPv6 Subnet (e.g. `"2001:db8::/64"`).
 
 ### Optional
@@ -59,7 +63,6 @@ resource "opnsense_kea_dhcpv6_subnet" "example" {
 - `description` (String) Optional description.
 - `dns_servers` (Set of String) DNS servers to offer. Defaults to `[]`.
 - `domain_search` (Set of String) Domain search list. Defaults to `[]`.
-- `interface` (String) Interface to listen on. Defaults to `""`.
 - `options` (Set of String) UUIDs of `opnsense_kea_dhcpv6_option` resources sent to the clients. Defaults to `[]`.
 - `pd_allocator` (String) Prefix delegation allocator. Defaults to `""`.
 - `pools` (Set of String) Set of address pools (e.g. `"2001:db8::100 - 2001:db8::200"`). Defaults to `[]`.

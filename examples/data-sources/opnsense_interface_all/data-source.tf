@@ -7,6 +7,6 @@ output "specific_mac" {
 }
 
 // Filter for specific device (advisable to use opnsense_interface instead)
- output "wireguard" {
-   value = [for i in data.opnsense_interface_all.all.interfaces : i if i.device == "wg1"]
- }
+output "wireguard" {
+  value = [for i in data.opnsense_interface_all.all.interfaces : i if i.device == "wg1"]
+}

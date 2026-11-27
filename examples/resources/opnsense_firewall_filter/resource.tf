@@ -35,7 +35,7 @@ resource "opnsense_firewall_filter" "floating_icmpv6" {
   }
 }
 
-# Example 4: Typical use case: Allow HTTPS traffic from specific source to web server
+# Example 3: Typical use case: Allow HTTPS traffic from specific source to web server
 resource "opnsense_firewall_filter" "allow_https" {
   enabled     = true
   sequence    = 100
@@ -72,6 +72,23 @@ resource "opnsense_firewall_filter" "allow_https" {
   }
 }
 
+# Example 4: Allow ICMP echo requests and replies from the LAN
+resource "opnsense_firewall_filter" "icmp_echo" {
+  description = "Allow ping from the LAN"
+
+  interface = {
+    interface = ["lan"]
+  }
+
+  filter = {
+    action      = "pass"
+    direction   = "in"
+    ip_protocol = "inet"
+    protocol    = "ICMP"
+    icmp_type   = ["echoreq", "echorep"]
+  }
+}
+
 # Example 5: Comprehensive example with all attributes explicitly configured
 resource "opnsense_firewall_filter" "comprehensive" {
   enabled        = true
@@ -98,11 +115,6 @@ resource "opnsense_firewall_filter" "comprehensive" {
     direction     = "in"
     ip_protocol   = "inet"
     protocol      = "TCP"
-
-    icmp_type = [
-      "echoreq",
-      "echorep",
-    ]
 
     source = {
       invert = false

@@ -213,7 +213,7 @@ Optional:
 - `enable_wpad` (Boolean) When set, CNAME records for the WPAD host of all configured domains will be automatically added as well as overrides for TXT records for domains. This allows automatic proxy configuration in your network but you should not enable it if you are not using WPAD or if you want to configure it by yourself. Defaults to `false`.
 - `enabled` (Boolean) Enable Unbound DNS resolver. Defaults to `false`.
 - `listen_interfaces` (Set of String) Interface IP addresses used for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. The default behavior is to respond to queries on every available IPv4 and IPv6 address. Defaults to `[]`.
-- `local_zone_type` (String) The local zone type used for the system domain. Type descriptions are available under "local-zone:" in the `unbound.conf(5)` manual page. Defaults to `""`.
+- `local_zone_type` (String) The local zone type used for the system domain. Type descriptions are available under "local-zone:" in the `unbound.conf(5)` manual page. Defaults to `"transparent"`.
 - `no_a_records` (Boolean) When set, Unbound will remove all A records from the answer section of all responses. Defaults to `false`.
 - `outgoing_interfaces` (Set of String) Utilize different network interfaces that Unbound will use to send queries to authoritative servers and receive their replies. By default all interfaces are used. Note that setting explicit outgoing interfaces only works when they are statically configured. Defaults to `[]`.
 - `port` (Number) The TCP/UDP port used for responding to DNS queries. Defaults to `53`.

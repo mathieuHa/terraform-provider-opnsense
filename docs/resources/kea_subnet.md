@@ -16,7 +16,7 @@ Configure DHCPv4 subnets for Kea.
 ```terraform
 // Small example
 resource "opnsense_kea_subnet" "lan" {
-  subnet = "10.8.0.0/16"
+  subnet      = "10.7.0.0/16"
   description = "LAN"
 }
 
@@ -33,11 +33,11 @@ resource "opnsense_kea_subnet" "example" {
   static_routes = [
     {
       destination_ip = "10.10.10.10"
-      router_ip = "10.8.0.1"
+      router_ip      = "10.8.0.1"
     },
     {
       destination_ip = "10.10.10.11"
-      router_ip = "10.8.50.1"
+      router_ip      = "10.8.50.1"
     }
   ]
 
@@ -74,7 +74,7 @@ resource "opnsense_kea_subnet" "example" {
     "10.10.101.11"
   ]
 
-  tftp_server = "tftp.example.com"
+  tftp_server   = "tftp.example.com"
   tftp_bootfile = "bootfile.txt"
 
   description = "EXAMPLE"

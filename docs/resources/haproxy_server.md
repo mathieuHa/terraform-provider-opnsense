@@ -47,7 +47,7 @@ resource "opnsense_haproxy_server" "web1" {
 - `service_name` (String) Provide either the FQDN for all the servers this template initializes or a service name to discover the available services via DNS SRV records. Defaults to ``.
 - `source` (String) Sets the source address which will be used when connecting to the server. Defaults to ``.
 - `ssl` (Boolean) Enable or disable SSL communication with this server. Defaults to `false`.
-- `ssl_ca` (Set of String) The selected CAs will be used to verify the server certificate. When nothing is selected, the system-wide CA certificate bundle will be used. To import additional CAs, go to Authority Manager. Defaults to `[]`.
+- `ssl_ca` (Set of String) The selected CAs will be used to verify the server certificate. When nothing is selected, the system-wide CA certificate bundle will be used. To import additional CAs, go to Authority Manager. Takes the `ref_id` of an `opnsense_trust_ca`, not its UUID. Defaults to `[]`.
 - `ssl_client_certificate` (String) This certificate will be sent if the server send a client certificate request.To import additional certificates, go to Certificate Manager. Defaults to ``.
 - `ssl_crl` (String) This certificate revocation list will be used to verify server's certificate. To import additional CRLs, go to Certificate Manager. Defaults to ``.
 - `ssl_sni` (String) The host name sent in the SNI TLS extension to the server. When present it will be preferred over the SNI expression. Defaults to ``.

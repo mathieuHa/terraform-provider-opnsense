@@ -1,9 +1,9 @@
 // Configure a prefix list
 resource "opnsense_quagga_bgp_prefixlist" "example0" {
-  enabled     = false
+  enabled = false
 
   description = "prefixlist0"
-  name = "example0"
+  name        = "example0"
 
   number = 1234
   action = "permit"
